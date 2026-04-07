@@ -21,7 +21,7 @@ Projeto desenvolvido para a disciplina **Projeto Integrador I – Engenharia de 
 |------|----|
 | (Arthur Lopes Santos Silva) | (26010221) |
 | (Gabriel Augusto Jorge) | (26010868) |
-| (Kauã Vargas Martins) | () |
+| (Kauã Vargas Martins) | (26011086) |
 | (Kauan Martinelli Corrêa) | (26004903) |
 | (Leonardo Antunes de Souza) | (26004615) |
 ---
