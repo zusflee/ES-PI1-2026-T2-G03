@@ -1,6 +1,6 @@
-# SISTEMA DE VOTACAO DIGITAL - Projeto Integrador
+''' --- MENUS E SUBMENUS --- '''
 
-# --- SUBMENU DE AUDITORIA ---
+# //// SUBMENU DE AUDITORIA ////
 def menu_auditoria():
     opcao_auditoria = ""
     while opcao_auditoria != "3":
@@ -17,7 +17,7 @@ def menu_auditoria():
             case "3": print("Voltando ao menu Votacao...")
             case _: print("Opcao invalida, tente novamente.")
 
-# --- SUBMENU DE RESULTADOS ---
+# //// SUBMENU DE RESULTADOS ////
 def menu_resultados():
     opcao_resultado = ""
     while opcao_resultado != "5":
@@ -38,56 +38,61 @@ def menu_resultados():
             case "5": print("Voltando ao menu Votacao...")
             case _: print("Opcao invalida, tente novamente.")
 
-# --- FLUXO DE VOTO ---
+# //// FLUXO DE VOTO ////
 def fluxo_voto():
     print("\n--- [VOTACAO] ---")
     titulo = input("Informe o Titulo de Eleitor: ")
-
+ 
     print("Validando eleitor no banco de dados...")
-
+ 
     if titulo == "":
         print("[ERRO] Titulo invalido. Retornando ao Menu Urna.")
         return
-
+ 
     print("Eleitor identificado com sucesso!")
-
+ 
     numero = input("Digite o numero do candidato: ")
-
+ 
     print("Candidato encontrado:")
     print("Numero : " + numero)
     print("Nome   : Candidato Ficticio")
     print("Partido: Partido Exemplo")
-
+ 
     confirma = input("\nConfirmar voto? (S/N): ").upper()
-
+ 
     if confirma == "S":
         print("Registrando voto no banco de dados...")
         print("Gerando protocolo de votacao...")
         print("Atualizando status do eleitor para Ja Votou...")
         print("[SUCESSO] Voto registrado com sucesso!")
-    else:
+    elif confirma == "N":
         print("Voto cancelado. Voltando ao Menu Urna...")
+    else:
+        print("Opcao invalida. Digite apenas S ou N.")
 
-# --- FLUXO DE ENCERRAR VOTACAO ---
+# //// FLUXO DE ENCERRAR VOTACAO ////
 def encerrar_votacao():
     print("\n--- [ENCERRAR VOTACAO] ---")
     confirma = input("Deseja realmente encerrar a votacao? (S/N): ").upper()
-
-    if confirma != "S":
+ 
+    if confirma == "N":
         print("Operacao cancelada. Voltando ao Menu Urna...")
         return
-
+    elif confirma != "S":
+        print("Opcao invalida. Digite apenas S ou N.")
+        return
+ 
     chave = input("Confirme a chave de encerramento: ")
-
+ 
     if chave == "":
         print("[ERRO] Chave invalida. Operacao cancelada.")
         return
-
+ 
     print("Encerrando sistema de votacao...")
     print("[SUCESSO] Votacao encerrada!")
     menu_resultados()
 
-# --- MENU DA URNA ---
+# //// MENU DA URNA ////
 def menu_urna():
     opcao_urna = ""
     while opcao_urna != "2":
@@ -102,7 +107,7 @@ def menu_urna():
             case "2": encerrar_votacao()
             case _: print("Opcao invalida, tente novamente.")
 
-# --- LOGIN DO MESARIO ---
+# //// LOGIN DO MESARIO ////
 def login_mesario():
     print("\n--- [LOGIN DO MESARIO] ---")
     usuario = input("Usuario: ")
@@ -118,7 +123,7 @@ def login_mesario():
 
     menu_urna()
 
-# --- MENU DE VOTACAO ---
+# //// MENU DE VOTACAO ////
 def menu_votacao():
     opcao_voto = ""
     while opcao_voto != "4":
@@ -137,24 +142,28 @@ def menu_votacao():
             case "4": print("Voltando ao menu principal...")
             case _: print("Opcao invalida, tente novamente.")
 
-# --- CADASTRAR ELEITOR ---
+# //// CADASTRAR ELEITOR ////
 def cadastrar_eleitor():
     print("\n--- [CADASTRAR ELEITOR] ---")
     nome = input("Nome: ")
     cpf = input("CPF: ")
     titulo = input("Titulo de Eleitor: ")
     mesario = input("E mesario? (S/N): ").upper()
-
+ 
+    if mesario != "S" and mesario != "N":
+        print("[ERRO] Responda apenas S ou N para mesario.")
+        return
+ 
     print("Validando dados...")
-
+ 
     if nome == "" or cpf == "" or titulo == "":
         print("[ERRO] Preencha todos os campos.")
         return
-
+ 
     print("Verificando duplicidade no banco de dados...")
     print("[SUCESSO] Eleitor " + nome + " cadastrado com sucesso!")
 
-# --- MENU DE GERENCIAMENTO ---
+# //// MENU DE GERENCIAMENTO ////
 def menu_gerenciamento():
     opcao_gerenciamento = ""
     while opcao_gerenciamento != "6":
@@ -177,7 +186,7 @@ def menu_gerenciamento():
             case "6": print("Voltando ao menu principal...")
             case _: print("Opcao invalida, tente novamente.")
 
-# --- INICIO DO SISTEMA ---
+# //// INICIO DO SISTEMA ////
 def iniciar_sistema():
     escolha = ""
     while escolha != "3":
