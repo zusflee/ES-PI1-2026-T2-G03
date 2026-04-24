@@ -42,47 +42,52 @@ def menu_resultados():
 def fluxo_voto():
     print("\n--- [VOTACAO] ---")
     titulo = input("Informe o Titulo de Eleitor: ")
-
+ 
     print("Validando eleitor no banco de dados...")
-
+ 
     if titulo == "":
         print("[ERRO] Titulo invalido. Retornando ao Menu Urna.")
         return
-
+ 
     print("Eleitor identificado com sucesso!")
-
+ 
     numero = input("Digite o numero do candidato: ")
-
+ 
     print("Candidato encontrado:")
     print("Numero : " + numero)
     print("Nome   : Candidato Ficticio")
     print("Partido: Partido Exemplo")
-
+ 
     confirma = input("\nConfirmar voto? (S/N): ").upper()
-
+ 
     if confirma == "S":
         print("Registrando voto no banco de dados...")
         print("Gerando protocolo de votacao...")
         print("Atualizando status do eleitor para Ja Votou...")
         print("[SUCESSO] Voto registrado com sucesso!")
-    else:
+    elif confirma == "N":
         print("Voto cancelado. Voltando ao Menu Urna...")
+    else:
+        print("Opcao invalida. Digite apenas S ou N.")
 
 # --- FLUXO DE ENCERRAR VOTACAO ---
 def encerrar_votacao():
     print("\n--- [ENCERRAR VOTACAO] ---")
     confirma = input("Deseja realmente encerrar a votacao? (S/N): ").upper()
-
-    if confirma != "S":
+ 
+    if confirma == "N":
         print("Operacao cancelada. Voltando ao Menu Urna...")
         return
-
+    elif confirma != "S":
+        print("Opcao invalida. Digite apenas S ou N.")
+        return
+ 
     chave = input("Confirme a chave de encerramento: ")
-
+ 
     if chave == "":
         print("[ERRO] Chave invalida. Operacao cancelada.")
         return
-
+ 
     print("Encerrando sistema de votacao...")
     print("[SUCESSO] Votacao encerrada!")
     menu_resultados()
@@ -144,13 +149,17 @@ def cadastrar_eleitor():
     cpf = input("CPF: ")
     titulo = input("Titulo de Eleitor: ")
     mesario = input("E mesario? (S/N): ").upper()
-
+ 
+    if mesario != "S" and mesario != "N":
+        print("[ERRO] Responda apenas S ou N para mesario.")
+        return
+ 
     print("Validando dados...")
-
+ 
     if nome == "" or cpf == "" or titulo == "":
         print("[ERRO] Preencha todos os campos.")
         return
-
+ 
     print("Verificando duplicidade no banco de dados...")
     print("[SUCESSO] Eleitor " + nome + " cadastrado com sucesso!")
 
