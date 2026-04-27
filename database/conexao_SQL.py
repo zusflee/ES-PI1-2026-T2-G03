@@ -7,29 +7,33 @@ import mysql.connector
 def criar_conexao():
     try:
         conexao = mysql.connector.connect(
-        host='127.0.0.1',
-        user='root',
-        password='fleezus',
-        database='sistema_eleitoral'
+        host='BD-ACD',
+        user='BD25022616',
+        password='Rzsty4',
+        database='BD25022616'
     )
         if conexao.is_connected():
-        print("Conectado ao MySQL com êxito!")
+            print("Conectado ao MySQL com êxito!")
 
         cursor = conexao.cursor()
-        return conexao  
+        return conexao, cursor
     except mysql.connector.Error as erro:
         print(f"Erro ao conectar{erro}:")
+        return None, None
 
 '''"try" significa: "tenta fazer isso; se der errado, vai pro except"
     Usamos try/except aqui porque conexão com banco pode falhar'''
  
 #Teste de leitura do banco
-cursor.execute("SELECT DATABASE();")
-resultado = cursor.fetchone()
-print("Banco atual:",resultado)
+def teste_conexao():
+    conexao, cursor = criar_conexao()
+    if cursor:
+        cursor.execute("SELECT DATABASE();")
+        resultado = cursor.fetchone()
+        print("Banco atual:",resultado)
+        cursor.close()
+        conexao.close()
 
-#Criar def buscar_candidato_por_nome
-#Criar def inserir_candidato
-#Criar def buscar_candidato_por_nome
-#Criar def atualizar_partido
-#Criar def deletar_candidato
+# Chama a função de teste ao rodar o arquivo
+if __name__ == "__main__":
+    teste_conexao()
