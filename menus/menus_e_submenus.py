@@ -176,7 +176,11 @@ def menu_gerenciamento():
                 novo_cpf    = input("Novo CPF: ")
                 novo_titulo = input("Novo titulo: ")
                 mesario     = input("E mesario? (S/N): ").upper()
-                novo_mesario = 1 if mesario == "S" else 0
+
+                if mesario == "S":
+                    novo_mesario = 1
+                else:
+                    novo_mesario = 0
                 editar_eleitor(id_eleitor, novo_nome, novo_cpf, novo_titulo, novo_mesario)
             case "3":
                 id_eleitor = int(input("ID do eleitor: "))

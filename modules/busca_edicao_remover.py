@@ -56,22 +56,35 @@ def remover_eleitor(id_eleitor):
     conexao, cursor = criar_conexao()
     if not conexao:
         return False
- 
+
     try:
-        sql = "DELETE FROM eleitores WHERE id = %s"
-        cursor.execute(sql, (id_eleitor,))
-        conexao.commit()
- 
-        if cursor.rowcount == 0:
+        cursor.execute("SELECT nome, titulo, cpf, is_mesario FROM eleitores WHERE id = %s", (id_eleitor,))
+        eleitor = cursor.fetchone()
+
+        if not eleitor:
             print("Nenhum eleitor encontrado com esse ID.")
             return False
- 
+
+        print(f"\nEleitor encontrado:")
+        print(f"Nome    : {eleitor[0]}")
+        print(f"Titulo  : {eleitor[1]}")
+        print(f"CPF     : {eleitor[2]}")
+        print(f"Mesario : {'Sim' if eleitor[3] == 1 else 'Nao'}")
+
+        confirma = input("\nConfirmar remocao? (S/N): ").upper()
+        if confirma != "S":
+            print("Remocao cancelada.")
+            return False
+
+        cursor.execute("DELETE FROM eleitores WHERE id = %s", (id_eleitor,))
+        conexao.commit()
+        print("Eleitor removido com sucesso!")
         return True
- 
+
     except Exception as e:
         print("Erro ao remover eleitor:", e)
         return False
- 
+
     finally:
         cursor.close()
         conexao.close()
