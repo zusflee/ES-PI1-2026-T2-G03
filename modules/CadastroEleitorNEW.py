@@ -1,6 +1,6 @@
-from ValidaçãoTituloNEW import validar_titulo
-from Validação_de_cpf import validação_de_cpf
-from conexao_SQL import criar_conexao
+from modules.ValidaçãoTituloNEW import validar_titulo
+from modules.Validação_de_cpf import validação_de_cpf
+from database.conexao_SQL import criar_conexao
 import random
 import mysql.connector
 
@@ -50,12 +50,3 @@ def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
 
 conexao, cursor = criar_conexao()
 
-if conexao and cursor:
-    cadastrar_eleitor(cursor, conexao)
-    
-    # Fecha as portas após terminar
-    cursor.close()
-    conexao.close()
-else:
-    # Se 'conexao' ou 'cursor' forem None (erro na conexao_SQL.py)
-    print("Erro ao conectar ao banco de dados. Verifique seu arquivo conexao_SQL.py")

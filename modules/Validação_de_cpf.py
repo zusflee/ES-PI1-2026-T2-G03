@@ -30,9 +30,3 @@ def validação_de_cpf(cpf):
        
 
     return True
-CPF= input("Digite seu CPF: ") #Soalicita o cpf
-if validação_de_cpf(CPF):
-   print("CPF Valido")
-else:
-   print("CPF INVALIDO")
-    

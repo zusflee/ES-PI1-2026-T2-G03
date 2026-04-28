@@ -1,9 +1,7 @@
 ''' --- MENUS E SUBMENUS --- '''
 
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+from modules.CadastroEleitorNEW import cadastrar_eleitor as cadastrar_eleitor_db
+from database.conexao_SQL import criar_conexao
 from modules.busca_edicao_remover import buscar_eleitor, editar_eleitor, remover_eleitor
 
 # //// SUBMENU DE AUDITORIA ////
@@ -150,24 +148,11 @@ def menu_votacao():
 
 # //// CADASTRAR ELEITOR ////
 def cadastrar_eleitor():
-    print("\n--- [CADASTRAR ELEITOR] ---")
-    nome = input("Nome: ")
-    cpf = input("CPF: ")
-    titulo = input("Titulo de Eleitor: ")
-    mesario = input("E mesario? (S/N): ").upper()
- 
-    if mesario != "S" and mesario != "N":
-        print("[ERRO] Responda apenas S ou N para mesario.")
-        return
- 
-    print("Validando dados...")
- 
-    if nome == "" or cpf == "" or titulo == "":
-        print("[ERRO] Preencha todos os campos.")
-        return
- 
-    print("Verificando duplicidade no banco de dados...")
-    print("[SUCESSO] Eleitor " + nome + " cadastrado com sucesso!")
+    conexao, cursor = criar_conexao()
+    if conexao and cursor:
+        cadastrar_eleitor_db(cursor, conexao)
+        cursor.close()
+        conexao.close()
 
 # //// MENU DE GERENCIAMENTO ////
 def menu_gerenciamento():
@@ -187,9 +172,12 @@ def menu_gerenciamento():
             case "1": cadastrar_eleitor()
             case "2":
                 id_eleitor = int(input("ID do eleitor: "))
-                novo_nome  = input("Novo nome: ")
-                nova_idade = int(input("Nova idade: "))
-                editar_eleitor(id_eleitor, novo_nome, nova_idade)
+                novo_nome   = input("Novo nome: ")
+                novo_cpf    = input("Novo CPF: ")
+                novo_titulo = input("Novo titulo: ")
+                mesario     = input("E mesario? (S/N): ").upper()
+                novo_mesario = 1 if mesario == "S" else 0
+                editar_eleitor(id_eleitor, novo_nome, novo_cpf, novo_titulo, novo_mesario)
             case "3":
                 id_eleitor = int(input("ID do eleitor: "))
                 remover_eleitor(id_eleitor)

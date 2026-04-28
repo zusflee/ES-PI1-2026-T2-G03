@@ -7,10 +7,10 @@ import mysql.connector
 def criar_conexao():
     try:
         conexao = mysql.connector.connect(
-        host='127.0.0.1',
-        user='root',
-        password='Cabo2015@',
-        database='sistema_eleitoral'
+        host='BD-ACD',
+        user='BD25022616',
+        password='Rzsty4',
+        database='BD25022616'
     )
         if conexao.is_connected():
             print("Conectado ao MySQL com êxito!")
