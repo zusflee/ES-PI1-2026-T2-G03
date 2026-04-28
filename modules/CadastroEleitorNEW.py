@@ -38,7 +38,7 @@ def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
 
     chave = gerar_chave()
     
-    sql = "INSERT INTO eleitores (nome, titulo, cpf, mesario, chave_acesso) VALUES (%s, %s, %s, %s, %s)"
+    sql = "INSERT INTO eleitores (nome, titulo, cpf, is_mesario, chave_acesso) VALUES (%s, %s, %s, %s, %s)"
     cursor.execute(sql, (nome, titulo, cpf, mesario, chave))
     
     # Salva as alterações no banco.'
