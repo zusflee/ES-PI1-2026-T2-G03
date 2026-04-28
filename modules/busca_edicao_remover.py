@@ -52,6 +52,21 @@ def editar_eleitor(id_eleitor, novo_nome, novo_cpf, novo_titulo, novo_mesario):
 
 '''Remover Eleitor'''
  
+def confirmar_remocao(cursor, conexao, id_eleitor):
+    confirma = input("\nConfirmar remocao? (S/N): ").upper()
+    if confirma == "S":
+        cursor.execute("DELETE FROM eleitores WHERE id = %s", (id_eleitor,))
+        conexao.commit()
+        print("Eleitor removido com sucesso!")
+        return True
+    elif confirma == "N":
+        print("Remocao cancelada.")
+        return False
+    else:
+        print("Opcao invalida. Digite apenas S ou N.")
+        return confirmar_remocao(cursor, conexao, id_eleitor)
+
+
 def remover_eleitor(id_eleitor):
     conexao, cursor = criar_conexao()
     if not conexao:
@@ -71,15 +86,7 @@ def remover_eleitor(id_eleitor):
         print(f"CPF     : {eleitor[2]}")
         print(f"Mesario : {'Sim' if eleitor[3] == 1 else 'Nao'}")
 
-        confirma = input("\nConfirmar remocao? (S/N): ").upper()
-        if confirma != "S":
-            print("Remocao cancelada.")
-            return False
-
-        cursor.execute("DELETE FROM eleitores WHERE id = %s", (id_eleitor,))
-        conexao.commit()
-        print("Eleitor removido com sucesso!")
-        return True
+        return confirmar_remocao(cursor, conexao, id_eleitor)
 
     except Exception as e:
         print("Erro ao remover eleitor:", e)
