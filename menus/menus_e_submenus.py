@@ -1,5 +1,11 @@
 ''' --- MENUS E SUBMENUS --- '''
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from modules.busca_edicao_remover import buscar_eleitor, editar_eleitor, remover_eleitor
+
 # //// SUBMENU DE AUDITORIA ////
 def menu_auditoria():
     opcao_auditoria = ""
@@ -179,13 +185,25 @@ def menu_gerenciamento():
 
         match opcao_gerenciamento:
             case "1": cadastrar_eleitor()
-            case "2": print("Buscando eleitor para edicao...")
-            case "3": print("Removendo eleitor do banco de dados...")
-            case "4": print("Buscando eleitor...")
+            case "2":
+                id_eleitor = int(input("ID do eleitor: "))
+                novo_nome  = input("Novo nome: ")
+                nova_idade = int(input("Nova idade: "))
+                editar_eleitor(id_eleitor, novo_nome, nova_idade)
+            case "3":
+                id_eleitor = int(input("ID do eleitor: "))
+                remover_eleitor(id_eleitor)
+            case "4":
+                termo = input("Digite o nome ou titulo: ")
+                resultado = buscar_eleitor(termo)
+                if resultado:
+                    for eleitor in resultado:
+                        print(eleitor)
+                else:
+                    print("Nenhum eleitor encontrado.")
             case "5": print("Listando todos os eleitores...")
             case "6": print("Voltando ao menu principal...")
-            case _: print("Opcao invalida, tente novamente.")
-
+            case _:   print("Opcao invalida, tente novamente.")
 # //// INICIO DO SISTEMA ////
 def iniciar_sistema():
     escolha = ""
