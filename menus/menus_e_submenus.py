@@ -45,25 +45,29 @@ def menu_resultados():
 # //// FLUXO DE VOTO ////
 def fluxo_voto():
     print("\n--- [VOTACAO] ---")
-    titulo = input("Informe o Titulo de Eleitor: ")
- 
+
+    titulo = ""
+    while titulo == "":
+        titulo = input("Informe o Titulo de Eleitor: ")
+        if titulo == "":
+            print("[ERRO] Titulo invalido. Tente novamente.")
+
     print("Validando eleitor no banco de dados...")
- 
-    if titulo == "":
-        print("[ERRO] Titulo invalido. Retornando ao Menu Urna.")
-        return
- 
     print("Eleitor identificado com sucesso!")
- 
+
     numero = input("Digite o numero do candidato: ")
- 
+
     print("Candidato encontrado:")
     print("Numero : " + numero)
     print("Nome   : Candidato Ficticio")
     print("Partido: Partido Exemplo")
- 
-    confirma = input("\nConfirmar voto? (S/N): ").upper()
- 
+
+    confirma = ""
+    while confirma not in ["S", "N"]:
+        confirma = input("\nConfirmar voto? (S/N): ").upper()
+        if confirma not in ["S", "N"]:
+            print("Opcao invalida. Digite apenas S ou N.")
+
     if confirma == "S":
         print("Registrando voto no banco de dados...")
         print("Gerando protocolo de votacao...")
@@ -71,27 +75,27 @@ def fluxo_voto():
         print("[SUCESSO] Voto registrado com sucesso!")
     elif confirma == "N":
         print("Voto cancelado. Voltando ao Menu Urna...")
-    else:
-        print("Opcao invalida. Digite apenas S ou N.")
 
 # //// FLUXO DE ENCERRAR VOTACAO ////
 def encerrar_votacao():
     print("\n--- [ENCERRAR VOTACAO] ---")
-    confirma = input("Deseja realmente encerrar a votacao? (S/N): ").upper()
- 
+
+    confirma = ""
+    while confirma not in ["S", "N"]:
+        confirma = input("Deseja realmente encerrar a votacao? (S/N): ").upper()
+        if confirma not in ["S", "N"]:
+            print("Opcao invalida. Digite apenas S ou N.")
+
     if confirma == "N":
         print("Operacao cancelada. Voltando ao Menu Urna...")
         return
-    elif confirma != "S":
-        print("Opcao invalida. Digite apenas S ou N.")
-        return
- 
-    chave = input("Confirme a chave de encerramento: ")
- 
-    if chave == "":
-        print("[ERRO] Chave invalida. Operacao cancelada.")
-        return
- 
+
+    chave = ""
+    while chave == "":
+        chave = input("Confirme a chave de encerramento: ")
+        if chave == "":
+            print("[ERRO] Chave invalida. Tente novamente.")
+
     print("Encerrando sistema de votacao...")
     print("[SUCESSO] Votacao encerrada!")
     menu_resultados()
@@ -114,12 +118,14 @@ def menu_urna():
 # //// LOGIN DO MESARIO ////
 def login_mesario():
     print("\n--- [LOGIN DO MESARIO] ---")
-    usuario = input("Usuario: ")
-    senha = input("Senha: ")
 
-    if usuario == "" or senha == "":
-        print("[ERRO] Usuario ou senha invalidos.")
-        return
+    usuario = ""
+    senha = ""
+    while usuario == "" or senha == "":
+        usuario = input("Usuario: ")
+        senha = input("Senha: ")
+        if usuario == "" or senha == "":
+            print("[ERRO] Usuario ou senha invalidos. Tente novamente.")
 
     print("[SUCESSO] Login realizado com sucesso!")
     print("Executando Zeresima (zerando contadores)...")
@@ -175,7 +181,11 @@ def menu_gerenciamento():
                 novo_nome   = input("Novo nome: ")
                 novo_cpf    = input("Novo CPF: ")
                 novo_titulo = input("Novo titulo: ")
-                mesario     = input("E mesario? (S/N): ").upper()
+                mesario = ""
+                while mesario not in ["S", "N"]:
+                    mesario = input("E mesario? (S/N): ").upper()
+                    if mesario not in ["S", "N"]:
+                        print("Opcao invalida. Digite apenas S ou N.")
 
                 if mesario == "S":
                     novo_mesario = 1
@@ -196,6 +206,7 @@ def menu_gerenciamento():
             case "5": print("Listando todos os eleitores...")
             case "6": print("Voltando ao menu principal...")
             case _:   print("Opcao invalida, tente novamente.")
+
 # //// INICIO DO SISTEMA ////
 def iniciar_sistema():
     escolha = ""
