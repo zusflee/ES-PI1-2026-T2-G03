@@ -1,4 +1,18 @@
 from database.conexao_SQL import criar_conexao
+
+
+
+'''Função de exibir eleitor'''
+
+
+def exibir_eleitor(eleitor):
+    print(f"\nEleitor:")
+    print(f"ID      : {eleitor[0]}")
+    print(f"Nome    : {eleitor[1]}")
+    print(f"Titulo  : {eleitor[2]}")
+    print(f"CPF     : {eleitor[3]}")
+    print(f"Mesario : {'Sim' if eleitor[4] == 1 else 'Nao'}")
+    print(f"Votou   : {'Sim' if eleitor[5] == 1 else 'Nao'}")
  
  
 '''Buscar Eleitor'''
@@ -7,18 +21,29 @@ def buscar_eleitor(termo):
     conexao, cursor = criar_conexao()
     if not conexao:
         return []
- 
+
     try:
         sql = "SELECT id, nome, titulo, cpf, is_mesario, status_voto FROM eleitores WHERE nome = %s OR titulo = %s"
         cursor.execute(sql, (termo, termo))
- 
+
         resultado = cursor.fetchall()
+
+        if not resultado:
+            print("Nenhum eleitor encontrado.")
+            return []
+
+        print(f"\n{len(resultado)} eleitor(es) encontrado(s):")
+
+        for eleitor in resultado:
+            print("\n----------------------")
+            exibir_eleitor(eleitor)
+
         return resultado
- 
+
     except Exception as e:
         print("Erro ao buscar eleitor:", e)
         return []
- 
+
     finally:
         cursor.close()
         conexao.close()
@@ -32,13 +57,40 @@ def editar_eleitor(id_eleitor, novo_nome, novo_cpf, novo_titulo, novo_mesario):
         return False
 
     try:
-        sql = "UPDATE eleitores SET nome = %s, cpf = %s, titulo = %s, is_mesario = %s WHERE id = %s"
+        # Buscar dados atuais
+        cursor.execute("""
+            SELECT id, nome, titulo, cpf, is_mesario, status_voto 
+            FROM eleitores WHERE id = %s
+        """, (id_eleitor,))
+        
+        eleitor = cursor.fetchone()
+
+        if not eleitor:
+            print("Nenhum eleitor encontrado com esse ID.")
+            return False
+
+        print("\n--- Dados atuais ---")
+        exibir_eleitor(eleitor)
+
+        # Atualizar
+        sql = """
+            UPDATE eleitores 
+            SET nome = %s, cpf = %s, titulo = %s, is_mesario = %s 
+            WHERE id = %s
+        """
         cursor.execute(sql, (novo_nome, novo_cpf, novo_titulo, novo_mesario, id_eleitor))
         conexao.commit()
 
-        if cursor.rowcount == 0:
-            print("Nenhum eleitor encontrado com esse ID.")
-            return False
+        # Buscar dados atualizados
+        cursor.execute("""
+            SELECT id, nome, titulo, cpf, is_mesario, status_voto 
+            FROM eleitores WHERE id = %s
+        """, (id_eleitor,))
+        
+        eleitor_atualizado = cursor.fetchone()
+
+        print("\n--- Dados atualizados ---")
+        exibir_eleitor(eleitor_atualizado)
 
         return True
 
@@ -81,10 +133,7 @@ def remover_eleitor(id_eleitor):
             return False
 
         print(f"\nEleitor encontrado:")
-        print(f"Nome    : {eleitor[0]}")
-        print(f"Titulo  : {eleitor[1]}")
-        print(f"CPF     : {eleitor[2]}")
-        print(f"Mesario : {'Sim' if eleitor[3] == 1 else 'Nao'}")
+        exibir_eleitor(eleitor)
 
         return confirmar_remocao(cursor, conexao, id_eleitor)
 
