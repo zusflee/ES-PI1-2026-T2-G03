@@ -5,9 +5,23 @@ import random
 import mysql.connector
 
 
-def gerar_chave():  ##Vai gerar a chave obrigatoria 
-    return ''.join([str(random.randint(0, 9)) for _ in range(8)])
+def gerar_chave(chave):
+    partes = chave.strip().split()
 
+    resultado=""
+    contador= 0
+
+    for letra in partes[0]:
+        if contador < 2:
+            chave +=letra.upper()
+            contador += 1
+
+    chave += partes[1][0].upper()
+
+    for _ in range(4):
+        chave +=str(random.randint(0,9))
+
+    return resultado
 
 def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
     print("\n--- CADASTRO DE ELEITOR ---")
