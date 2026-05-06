@@ -56,8 +56,9 @@ def validar_titulo(titulo):
 
     return True
 
-titulo = input("Digite o título de eleitor: ")
-if validar_titulo(titulo):
-    print("Título válido!")
-else:
-    print("Título inválido!")
+if __name__ == "__main__":
+    titulo = input("Digite o título de eleitor: ")
+    if validar_titulo(titulo):
+        print("Título válido!")
+    else:
+        print("Título inválido!")
