@@ -56,17 +56,10 @@ def validar_titulo(titulo):
 
     return True
 
-<<<<<<< Updated upstream
 if __name__ == "__main__":
     titulo = input("Digite o título de eleitor: ")
     if validar_titulo(titulo):
         print("Título válido!")
     else:
         print("Título inválido!")
-=======
-titulo = input("Digite o título de eleitor: ")
-if validar_titulo(titulo):
-    print("Título válido!")
-else:
-    print("Título inválido!")
->>>>>>> Stashed changes
+
