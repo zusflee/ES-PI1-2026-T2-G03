@@ -8,7 +8,10 @@ def atualizar_partido(conexao, cursor, numero_candidato, novo_partido):
 
         if cursor.rowcount > 0:
             # rowcount = quantas linhas foram afetadas pelo UPDATE
-            print(f"Partido do candidato nº {numero_candidato} atualizado para '{novo_partido}'.")
+            print("\n--- PARTIDO ATUALIZADO ---")
+            print(f"  Numero    : {numero_candidato}")
+            print(f"  Novo Partido: {novo_partido}")
+            print("--------------------------\n")
         else:
             print(f"Nenhum candidato encontrado com o número {numero_candidato}.")
 
