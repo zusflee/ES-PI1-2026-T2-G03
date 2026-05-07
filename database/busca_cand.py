@@ -1,4 +1,4 @@
-from conexão_banco import criar_conexao
+from database.conexao_SQL import criar_conexao
 
 # Buscar candidato pelo nome
 
@@ -12,7 +12,12 @@ def buscar_candidato(cursor, nome):
 
     if resultados:
         for candidato in resultados:
-            print(candidato)
+            print("\n--- CANDIDATO ENCONTRADO ---")
+            print(f"  ID     : {candidato[0]}")
+            print(f"  Nome   : {candidato[1]}")
+            print(f"  Numero : {candidato[2]}")
+            print(f"  Partido: {candidato[3]}")
+            print("----------------------------")
     else:
         print("Nenhume candidato encontrado com esse nome.")
     return resultados
