@@ -1,4 +1,4 @@
-from conexão_banco import criar_conexao
+from database.conexao_SQL import criar_conexao
 import mysql.connector
 
 # Inserir candidatos no banco de dados
@@ -14,7 +14,11 @@ def inserir_candidatos(conexao, cursor, nome, numero, partido):
         cursor.execute(sql, valores)
         conexao.commit()  # Confirma a inserção no banco
 
-        print(f"Candidato '{nome}' inserido com sucesso!")
+        print("\n--- CANDIDATO CADASTRADO ---")
+        print(f"  Nome   : {nome}")
+        print(f"  Numero : {numero}")
+        print(f"  Partido: {partido}")
+        print("----------------------------\n")
 
     except mysql.connector.Error as erro:
         conexao.rollback()  # Desfaz a operação se der erro
@@ -27,7 +31,7 @@ if __name__ == "__main__":
     conexao = criar_conexao()
     cursor = conexao.cursor()
 
-    inserir_candidatos(conexao, cursor, 'Leonardo', 22, 'PSDB')
+    inserir_candidatos(conexao, cursor,)
 
     cursor.close()
     conexao.close()
