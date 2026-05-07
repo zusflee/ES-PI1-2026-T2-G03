@@ -5,21 +5,21 @@ import random
 import mysql.connector
 
 
-def gerar_chave(chave):
-    partes = chave.strip().split()
+def gerar_chave(nome):
+    partes = nome.strip().split()
 
-    resultado=""
+    resultado= ""
     contador= 0
 
     for letra in partes[0]:
         if contador < 2:
-            chave +=letra.upper()
+            resultado += letra.upper()
             contador += 1
 
-    chave += partes[1][0].upper()
+    resultado += partes[1][0].upper()
 
     for _ in range(4):
-        chave +=str(random.randint(0,9))
+        resultado +=str(random.randint(0,9))
 
     return resultado
 
@@ -50,7 +50,7 @@ def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
         print("Eleitor já cadastrado com este CPF ou título!")
         return
 
-    chave = gerar_chave()
+    chave = gerar_chave(nome)
     
     sql = "INSERT INTO eleitores (nome, titulo, cpf, is_mesario, chave_acesso) VALUES (%s, %s, %s, %s, %s)"
     cursor.execute(sql, (nome, titulo, cpf, mesario, chave))
@@ -58,8 +58,12 @@ def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
     # Salva as alterações no banco.'
     conexao.commit()
 
-    print(f"Eleitor cadastrado com sucesso!")
-    print(f"Sua chave de acesso é: {chave}")
+    print("\n--- CADASTRO REALIZADO ---")
+    print(f"  Nome  : {nome}")
+    print(f"  Título: {titulo}")
+    print(f"  CPF   : {cpf}")
+    print(f"  Chave : {chave}")
+    print("--------------------------\n")
 
 
 conexao, cursor = criar_conexao()
