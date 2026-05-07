@@ -5,14 +5,22 @@ import random
 import mysql.connector
 
 
+<<<<<<< Updated upstream
 def gerar_chave(nome):
     partes = nome.strip().split()
 
     resultado= ""
+=======
+def gerar_chave(chave):
+    partes = chave.strip().split()
+
+    resultado=""
+>>>>>>> Stashed changes
     contador= 0
 
     for letra in partes[0]:
         if contador < 2:
+<<<<<<< Updated upstream
             resultado += letra.upper()
             contador += 1
 
@@ -20,6 +28,15 @@ def gerar_chave(nome):
 
     for _ in range(4):
         resultado +=str(random.randint(0,9))
+=======
+            chave +=letra.upper()
+            contador += 1
+
+    chave += partes[1][0].upper()
+
+    for _ in range(4):
+        chave +=str(random.randint(0,9))
+>>>>>>> Stashed changes
 
     return resultado
 
