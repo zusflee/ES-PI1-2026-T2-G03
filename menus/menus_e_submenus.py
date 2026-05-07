@@ -3,6 +3,10 @@
 from modules.CadastroEleitorNEW import cadastrar_eleitor as cadastrar_eleitor_db
 from database.conexao_SQL import criar_conexao
 from modules.busca_edicao_remover import buscar_eleitor, editar_eleitor, remover_eleitor
+from database.inserir_cand import inserir_candidatos
+from database.busca_cand import buscar_candidato
+from database.delete_cand import deletar_candidato
+from database.atualizar_partido import atualizar_partido
 
 # //// SUBMENU DE AUDITORIA ////
 def menu_auditoria():
@@ -41,6 +45,54 @@ def menu_resultados():
             case "4": print("Validando integridade dos dados...")
             case "5": print("Voltando ao menu Votacao...")
             case _: print("Opcao invalida, tente novamente.")
+
+# //// MENU DE CANDIDATOS ////
+def menu_candidatos():
+    opcao = ""
+    while opcao != "5":
+        print("\n--- [CANDIDATOS] ---")
+        print("1. Inserir Candidato")
+        print("2. Buscar Candidato")
+        print("3. Deletar Candidato")
+        print("4. Atualizar Partido")
+        print("5. Voltar")
+
+        opcao = input("\nEscolha uma opcao: ")
+
+        match opcao:
+            case "1":
+                conexao, cursor = criar_conexao()
+                nome   = input("Nome do candidato: ")
+                numero = input("Numero: ")
+                partido = input("Partido: ")
+                inserir_candidatos(conexao, cursor, nome, numero, partido)
+                cursor.close()    
+                conexao.close()
+            case "2":
+                conexao, cursor = criar_conexao()
+                nome = input("Nome do candidato: ")
+                buscar_candidato(cursor, nome)
+                cursor.close()    
+                conexao.close()
+            case "3":
+                conexao, cursor = criar_conexao()
+                numero = input("Numero do candidato: ")
+                deletar_candidato(conexao, cursor, numero)
+                cursor.close()    
+                conexao.close()
+            case "4":
+                conexao, cursor = criar_conexao()
+                numero     = input("Numero do candidato: ")
+                novo_partido = input("Novo partido: ")
+                atualizar_partido(conexao, cursor, numero, novo_partido)
+                cursor.close()    
+                conexao.close()
+            case "5":
+                print("Voltando...")
+            case _:
+                print("Opcao invalida, tente novamente.")
+
+        
 
 # //// FLUXO DE VOTO ////
 def fluxo_voto():
@@ -163,14 +215,15 @@ def cadastrar_eleitor():
 # //// MENU DE GERENCIAMENTO ////
 def menu_gerenciamento():
     opcao_gerenciamento = ""
-    while opcao_gerenciamento != "6":
+    while opcao_gerenciamento != "7":
         print("\n--- [GERENCIAMENTO] ---")
         print("1. Cadastrar Eleitor")
         print("2. Editar Eleitor")
         print("3. Remover Eleitor")
         print("4. Buscar Eleitor")
         print("5. Listar Eleitores")
-        print("6. Voltar")
+        print("6. Gerenciar Candidatos")
+        print("7. Voltar")
 
         opcao_gerenciamento = input("\nEscolha uma opcao: ")
 
@@ -197,18 +250,18 @@ def menu_gerenciamento():
                 remover_eleitor(id_eleitor)
             case "4":
                 termo = input("Digite o nome ou titulo: ")
-                resultado = buscar_eleitor(termo)
-                if resultado:
-                    for eleitor in resultado:
-                        print(eleitor)
-                else:
-                    print("Nenhum eleitor encontrado.")
+                buscar_eleitor(termo)
             case "5": print("Listando todos os eleitores...")
-            case "6": print("Voltando ao menu principal...")
+            case "6": menu_candidatos()
+            case 7:   print("Voltando ao menu principal...")
             case _:   print("Opcao invalida, tente novamente.")
 
 # //// INICIO DO SISTEMA ////
 def iniciar_sistema():
+    conexao, cursor = criar_conexao()
+    print("Conectado ao MySQL com êxito!") 
+    cursor.close()
+    conexao.close()
     escolha = ""
     while escolha != "3":
         print("\n=== SISTEMA DE VOTACAO DIGITAL ===")
