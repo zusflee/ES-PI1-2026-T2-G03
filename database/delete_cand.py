@@ -13,7 +13,9 @@ def deletar_candidato(conexao, cursor, numero_candidato):
         conexao.commit()
 
         if cursor.rowcount > 0:
-            print(f"Candidato nº {numero_candidato} deletado com sucesso!")
+            print("\n--- CANDIDATO REMOVIDO ---")
+            print(f"  Numero: {numero_candidato}")
+            print("--------------------------\n")
         else:
             print(f"Nenhum candidato encontrado com o número {numero_candidato}.")
 
