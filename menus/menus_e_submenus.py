@@ -229,31 +229,14 @@ def menu_gerenciamento():
 
         match opcao_gerenciamento:
             case "1": cadastrar_eleitor()
-            case "2":
-                id_eleitor = int(input("ID do eleitor: "))
-                novo_nome   = input("Novo nome: ")
-                novo_cpf    = input("Novo CPF: ")
-                novo_titulo = input("Novo titulo: ")
-                mesario = ""
-                while mesario not in ["S", "N"]:
-                    mesario = input("E mesario? (S/N): ").upper()
-                    if mesario not in ["S", "N"]:
-                        print("Opcao invalida. Digite apenas S ou N.")
-
-                if mesario == "S":
-                    novo_mesario = 1
-                else:
-                    novo_mesario = 0
-                editar_eleitor(id_eleitor, novo_nome, novo_cpf, novo_titulo, novo_mesario)
-            case "3":
-                id_eleitor = int(input("ID do eleitor: "))
-                remover_eleitor(id_eleitor)
+            case "2": editar_eleitor()
+            case "3": remover_eleitor()
             case "4":
                 termo = input("Digite o nome ou titulo: ")
                 buscar_eleitor(termo)
             case "5": print("Listando todos os eleitores...")
             case "6": menu_candidatos()
-            case 7:   print("Voltando ao menu principal...")
+            case "7": print("Voltando ao menu principal...")
             case _:   print("Opcao invalida, tente novamente.")
 
 # //// INICIO DO SISTEMA ////
