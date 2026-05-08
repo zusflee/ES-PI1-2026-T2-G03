@@ -1,0 +1,52 @@
+from datetime import datetime
+import mysql.connector
+ 
+#  Conexão com banco de dados
+conn = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="sua_senha_aqui",  # ← altere
+    database="ladpy_db"
+)
+cursor = conn.cursor(dictionary=True)
+ 
+# Limpa os registros anteriores
+cursor.execute("DELETE FROM votos")
+cursor.execute("ALTER TABLE votos AUTO_INCREMENT = 1")
+cursor.execute("UPDATE eleitores SET status_voto = 'Pendente'")
+cursor.execute("UPDATE candidatos SET votos = 0")
+conn.commit()
+
+#  procura os candidatos já zerados 
+cursor.execute("SELECT nome, numero, partido, votos FROM candidatos ORDER BY CAST(numero AS UNSIGNED)")
+candidatos = cursor.fetchall()
+ 
+#  cria um relatório 
+print("\n" + "═" * 58)
+print("  LAD.Py ▸ ZERÉZIMA — URNA VAZIA")
+print(f"  {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
+print("═" * 58)
+print(f"  {'Nº':<6} {'Candidato':<30} {'Partido':<15} {'Votos':>5}")
+print("  " + "─" * 54)
+ 
+for c in candidatos:
+    status = "✔️" if c["votos"] == 0 else "✗ ERRO"
+    print(f"  {c['numero']:<6} {c['nome'][:29]:<30} {c['partido'][:14]:<15} {c['votos']:>5}  {status}")
+ 
+print("  " + "─" * 54)
+print(f"  Total candidatos : {len(candidatos)}")
+print(f"  Total de votos   : {sum(c['votos'] for c in candidatos)}")
+print("═" * 58)
+print("  ✔️  Urna zerada. A eleição pode ser iniciada.")
+print("═" * 58)
+ 
+#  Log de entrada 
+with open("log_ocorrencias.txt", "a", encoding="utf-8") as log:
+    timestamp = datetime.now().strftime("[%Y-%m-%d %H:%M:%S]")
+    log.write(f"{timestamp} ABERTURA: Votação iniciada com sucesso. Total de votos zerado.\n")
+ 
+input("\n  Pressione ENTER para abrir a urna...")
+ 
+# fecha a conexão
+cursor.close()
+conn.close()
