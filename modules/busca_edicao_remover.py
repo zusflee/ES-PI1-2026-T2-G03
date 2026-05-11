@@ -86,25 +86,44 @@ def editar_eleitor():
             print("Edicao cancelada.")
             return 0
 
-        print("\n--- Digite os novos dados ---")
-        novo_nome   = input("Novo nome: ")
-        novo_titulo = input("Novo titulo: ")
-        novo_cpf    = input("Novo CPF: ")
+        print("\n--- O que deseja editar? ---")
+        print("1 - Nome")
+        print("2 - Titulo")
+        print("3 - CPF")
+        print("4 - Mesario")
+        print("0 - Cancelar")
 
-        novo_mesario = ""
-        while novo_mesario not in ["S", "N"]:
-            novo_mesario = input("E mesario? (S/N): ").upper()
-            if novo_mesario not in ["S", "N"]:
-                print("[ERRO] Digite apenas S ou N.")
+        opcao_campo = input("\nEscolha uma opcao: ").strip()
 
-        novo_mesario = 1 if novo_mesario == "S" else 0
+        if opcao_campo == "0":
+            print("Edicao cancelada.")
+            return 0
 
-        sql = """
-            UPDATE eleitores
-            SET nome = %s, cpf = %s, titulo = %s, is_mesario = %s
-            WHERE id = %s
-        """
-        cursor.execute(sql, (novo_nome, novo_cpf, novo_titulo, novo_mesario, id_eleitor))
+        campos = {
+            "1": ("nome",       "Novo nome: "),
+            "2": ("titulo",     "Novo titulo: "),
+            "3": ("cpf",        "Novo CPF: "),
+            "4": ("is_mesario", "E mesario? (S/N): "),
+        }
+
+        if opcao_campo not in campos:
+            print("[ERRO] Opcao invalida.")
+            return 0
+
+        coluna, pergunta = campos[opcao_campo]
+
+        if opcao_campo == "4":
+            novo_valor = ""
+            while novo_valor not in ["S", "N"]:
+                novo_valor = input(pergunta).upper()
+                if novo_valor not in ["S", "N"]:
+                    print("[ERRO] Digite apenas S ou N.")
+            novo_valor = 1 if novo_valor == "S" else 0
+        else:
+            novo_valor = input(pergunta).strip()
+
+        sql = f"UPDATE eleitores SET {coluna} = %s WHERE id = %s"
+        cursor.execute(sql, (novo_valor, id_eleitor))
         conexao.commit()
 
         print("\n--- Dados atualizados ---")
