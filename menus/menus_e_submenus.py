@@ -218,41 +218,34 @@ def menu_urna():
 def login_mesario():
     print("\n--- [LOGIN DO MESARIO] ---")
 
-    usuario = ""
-    senha = ""
-    while usuario == "" or senha == "":
-        usuario = input("Usuario: ")
-        senha = input("Senha: ")
-        if usuario == "" or senha == "":
-            print("[ERRO] Usuario ou senha invalidos. Tente novamente.")
+    nome = ""
+    chave_de_acesso = ""
+    while nome == "" or chave_de_acesso == "":
+        nome = input("Nome: ")
+        chave_de_acesso = input("Chave de acesso: ")
+        if nome == "" or chave_de_acesso == "":
+            print("[ERRO] Nome ou chave de acesso invalidos. Tente novamente.")
 
-    print("[SUCESSO] Login realizado com sucesso!")
-    print("Executando Zeresima (zerando contadores)...")
-    print("Urna zeradadef login_mesario():
     conexao, cursor = criar_conexao()
     
     if not conexao or not cursor:
         print("[ERRO] Falha na conexão com o banco de dados.")
         return
-    print("\n--- [LOGIN DO MESARIO] ---")
+
     autenticado = abertura_urna(cursor, conexao)
 
     cursor.close()
     conexao.close()
-
+    
     if autenticado:
+        print("[SUCESSO] Login realizado com sucesso!")
+        print("Executando Zeresima (zerando contadores)...")
+        print("Urna zerada e pronta para uso.")
         menu_urna()
     else:
         print("[ERRO] Autenticação falhou. Voltando ao menu...")
 
-    print("[SUCESSO] Login realizado com sucesso!")
-    print("Executando Zeresima (zerando contadores)...")
-    print("Urna zerada e pronta para uso.")
-
-    menu_urna() e pronta para uso.")
-
     menu_urna()
-
 # //// MENU DE VOTACAO ////
 def menu_votacao():
     opcao_voto = ""
