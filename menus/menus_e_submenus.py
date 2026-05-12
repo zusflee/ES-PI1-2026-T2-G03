@@ -128,6 +128,53 @@ def fluxo_voto():
 
     numero = input("Digite o numero do candidato: ")
 
+    # Buscar candidato
+    cursor.execute("SELECT * FROM candidatos WHERE numero = %s", (numero,))
+    candidato = cursor.fetchone()
+
+    if not candidato:
+        print("[ERRO] Candidato não encontrado.")
+        cursor.close()
+        conexao.close()
+        return
+
+    print(f"\nCandidato encontrado:")
+    print(f"Numero  : {candidato[2]}")
+    print(f"Nome    : {candidato[1]}")
+    print(f"Partido : {candidato[3]}")
+
+    confirma = ""
+    while confirma not in ["S", "N"]:
+        confirma = input("\nConfirmar voto? (S/N): ").upper()
+        if confirma not in ["S", "N"]:
+            print("Opcao invalida. Digite apenas S ou N.")
+
+    if confirma == "S":
+        # Registrar voto
+        cursor.execute(
+            "INSERT INTO votos (id_eleitor, id_candidato) VALUES (%s, %s)",
+            (eleitor[0], candidato[0])
+        )
+        # Atualizar contagem do candidato
+        cursor.execute(
+            "UPDATE candidatos SET total_votos = total_votos + 1 WHERE id = %s",
+            (candidato[0],)
+        )
+        # Marcar eleitor como já votou
+        cursor.execute(
+            "UPDATE eleitores SET status_votos = 'Ja Votou' WHERE titulo = %s",
+            (titulo,)
+        )
+        conexao.commit()
+        print("[SUCESSO] Voto registrado com sucesso!")
+
+    elif confirma == "N":
+        print("Voto cancelado. Voltando ao Menu Urna...")
+
+    cursor.close()
+    conexao.close()
+
+
 # //// FLUXO DE ENCERRAR VOTACAO ////
 def encerrar_votacao():
     print("\n--- [ENCERRAR VOTACAO] ---")
