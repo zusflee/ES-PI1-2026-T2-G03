@@ -4,7 +4,7 @@ def zerézima(cursor, conexao):
 
     cursor.execute("DELETE FROM votos") #Toda esta area esta responsavel por limpar e zerar os registros
     cursor.execute("UPDATE candidatos SET total_votos = 0")
-    cursor.execute("UPDATE eleitores SET status_votos ='Não Votou'")
+    cursor.execute("UPDATE eleitores SET status_voto ='Não Votou'")
     conexao.commit()
     print("Registro de Votação limpos com sucesso!")
 
@@ -19,8 +19,8 @@ def zerézima(cursor, conexao):
         print(f"Partido:{candidato[3]}")
         print(f"Votos: 0")
 
-        print("\nZerézima concluida com sucesso! A urna esta vazia e pronta para a votação!")
-        return True
+    print("\nZerézima concluida com sucesso! A urna esta vazia e pronta para a votação!")
+    return True
 
 
 
@@ -39,15 +39,15 @@ def abertura_urna(cursor, conexao):
         return False
     
     if eleitor[2] != titulo: #vai verificar se o titulo que consta no banco esta igual ao digitado
-        print("Dados incorretos. A validaçãp falhou!")
+        print("Dados incorretos. A validação falhou!")
         return False
     
     if eleitor[3][:4] != cmc_cpf: #vai verificar se os 4 primeiros digistos do cpf são iguais tanto no painel quanto no bd
-        print("Dados incorretos. A validaçãp falhou!")
+        print("Dados incorretos. A validação falhou!")
         return False
 
     if eleitor[4] !=chave_acesso: #vai verificar se a chave de acesso corresponde em ambos os lugares
-        print("Dados incorretos. A validaçãp falhou!")
+        print("Dados incorretos. A validação falhou!")
         return False
     
     if not eleitor[5]: #vai verificar se tem registro como mesario

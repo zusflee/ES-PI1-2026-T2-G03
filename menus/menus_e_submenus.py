@@ -202,16 +202,18 @@ def encerrar_votacao():
 # //// MENU DA URNA ////
 def menu_urna():
     opcao_urna = ""
-    while opcao_urna != "2":
+    while opcao_urna != "3":
         print("\n--- [MENU URNA] ---")
         print("1. Votar")
         print("2. Encerrar Votacao")
+        print("3. Voltar")
 
         opcao_urna = input("\nEscolha uma opcao: ")
 
         match opcao_urna:
             case "1": fluxo_voto()
             case "2": encerrar_votacao()
+            case "3": print("Voltando ao menu anterior...")
             case _: print("Opcao invalida, tente novamente.")
 
 # //// LOGIN DO MESARIO ////
@@ -239,13 +241,11 @@ def login_mesario():
     
     if autenticado:
         print("[SUCESSO] Login realizado com sucesso!")
-        print("Executando Zeresima (zerando contadores)...")
-        print("Urna zerada e pronta para uso.")
         menu_urna()
     else:
         print("[ERRO] Autenticação falhou. Voltando ao menu...")
 
-    menu_urna()
+
 # //// MENU DE VOTACAO ////
 def menu_votacao():
     opcao_voto = ""
@@ -259,7 +259,12 @@ def menu_votacao():
         opcao_voto = input("\nEscolha uma opcao: ")
 
         match opcao_voto:
-            case "1": login_mesario()
+            case "1":
+                eh_mesario = input("Voce e o mesario? (S/N): ").upper()
+                if eh_mesario == "S":
+                    login_mesario()
+                else:
+                    print("O sistema ainda nao foi aberto por um mesario.")
             case "2": menu_auditoria()
             case "3": menu_resultados()
             case "4": print("Voltando ao menu principal...")
