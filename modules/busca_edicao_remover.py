@@ -180,3 +180,36 @@ def remover_eleitor():
     finally:
         cursor.close()
         conexao.close()
+
+'''Listar Eleitores'''
+
+def listar_eleitores():
+    conexao, cursor = criar_conexao()
+
+    try:
+        cursor.execute("""
+            SELECT id, nome, titulo, cpf, is_mesario, status_voto
+            FROM eleitores
+            ORDER BY nome
+        """)
+        eleitores = cursor.fetchall()
+
+        # Verifica se existe pelo menos um eleitor cadastrado
+        if not eleitores:
+            print("\nNenhum eleitor cadastrado no sistema.")
+            return
+
+        print(f"\n{'='*50}")
+        print(f"  LISTA DE ELEITORES ({len(eleitores)} cadastrado(s))")
+        print(f"{'='*50}")  
+
+        for eleitor in eleitores:
+            exibir_eleitor(eleitor)
+            print("-" * 50)  # Separador visual entre eleitores
+
+    except Exception as e:
+        print(f"\nErro ao listar eleitores: {e}")
+
+    finally:
+        cursor.close()
+        conexao.close()
