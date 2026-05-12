@@ -1,7 +1,8 @@
+from database.conexao_SQL import criar_conexao
 def zerézima(cursor, conexao):
     print("\n--- INICIANDO ZERÉZIMA ---")
 
-    cursor.execute("DELETE FROM votos")
+    cursor.execute("DELETE FROM votos") #Toda esta area esta responsavel por limpar e zerar os registros
     cursor.execute("UPDATE candidatos SET total_votos = 0")
     cursor.execute("UPDATE eleitores SET status_votos ='Não Votou'")
     conexao.commit()
@@ -11,12 +12,15 @@ def zerézima(cursor, conexao):
     candidatos = cursor.fetchall()
 
     print("\n--- CANDIDATOS REGISTRADOS ---")
-    for candidato in candidatos: 
+    
+    for candidato in candidatos: #area responsavel por listar os candidatos
         print(f"Nome: {candidato[1]}")
         print(f"Numero:{candidato[2]}")
         print(f"Partido:{candidato[3]}")
-        print(f"Votos")
+        print(f"Votos: 0")
 
+        print("\nZerézima concluida com sucesso! A urna esta vazia e pronta para a votação!")
+        return True
 
 
 
@@ -51,5 +55,7 @@ def abertura_urna(cursor, conexao):
         return False
      
     print(f"Bem vindo, {eleitor[1]}! Identidade validada com sucesso!")
+
+    zerézima(cursor, conexao)
     return True
 
