@@ -228,7 +228,28 @@ def login_mesario():
 
     print("[SUCESSO] Login realizado com sucesso!")
     print("Executando Zeresima (zerando contadores)...")
+    print("Urna zeradadef login_mesario():
+    conexao, cursor = criar_conexao()
+    
+    if not conexao or not cursor:
+        print("[ERRO] Falha na conexão com o banco de dados.")
+        return
+    print("\n--- [LOGIN DO MESARIO] ---")
+    autenticado = abertura_urna(cursor, conexao)
+
+    cursor.close()
+    conexao.close()
+
+    if autenticado:
+        menu_urna()
+    else:
+        print("[ERRO] Autenticação falhou. Voltando ao menu...")
+
+    print("[SUCESSO] Login realizado com sucesso!")
+    print("Executando Zeresima (zerando contadores)...")
     print("Urna zerada e pronta para uso.")
+
+    menu_urna() e pronta para uso.")
 
     menu_urna()
 
