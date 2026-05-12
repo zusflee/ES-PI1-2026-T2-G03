@@ -7,6 +7,8 @@ from database.inserir_cand import inserir_candidatos
 from database.busca_cand import buscar_candidato
 from database.delete_cand import deletar_candidato
 from database.atualizar_partido import atualizar_partido
+from modules.busca_edicao_remover import listar_eleitores
+from modules.abertura_urna import abertura_urna
 
 # //// SUBMENU DE AUDITORIA ////
 def menu_auditoria():
@@ -96,37 +98,35 @@ def menu_candidatos():
 
 # //// FLUXO DE VOTO ////
 def fluxo_voto():
-    print("\n--- [VOTACAO] ---")
+    conexao, cursor = criar_conexao()
+    if not conexao or not cursor:
+        print("[ERRO] Sem conexão com o banco.")
+        return
 
     titulo = ""
     while titulo == "":
-        titulo = input("Informe o Titulo de Eleitor: ")
+        titulo = input("Informe o Título de Eleitor: ")
         if titulo == "":
-            print("[ERRO] Titulo invalido. Tente novamente.")
+            print("[ERRO] Título inválido. Tente novamente.")
 
-    print("Validando eleitor no banco de dados...")
-    print("Eleitor identificado com sucesso!")
+    # Buscar eleitor no banco
+    cursor.execute("SELECT * FROM eleitores WHERE titulo = %s", (titulo,))
+    eleitor = cursor.fetchone()
+
+    if not eleitor:
+        print("Eleitor não encontrado.")
+        cursor.close()
+        conexao.close()
+        return
+
+    # Verificar se já votou
+    if eleitor[6] == "Ja Votou": 
+        print(f"[ERRO] O eleitor {eleitor[1]} já votou!")
+        cursor.close()
+        conexao.close()
+        return
 
     numero = input("Digite o numero do candidato: ")
-
-    print("Candidato encontrado:")
-    print("Numero : " + numero)
-    print("Nome   : Candidato Ficticio")
-    print("Partido: Partido Exemplo")
-
-    confirma = ""
-    while confirma not in ["S", "N"]:
-        confirma = input("\nConfirmar voto? (S/N): ").upper()
-        if confirma not in ["S", "N"]:
-            print("Opcao invalida. Digite apenas S ou N.")
-
-    if confirma == "S":
-        print("Registrando voto no banco de dados...")
-        print("Gerando protocolo de votacao...")
-        print("Atualizando status do eleitor para Ja Votou...")
-        print("[SUCESSO] Voto registrado com sucesso!")
-    elif confirma == "N":
-        print("Voto cancelado. Voltando ao Menu Urna...")
 
 # //// FLUXO DE ENCERRAR VOTACAO ////
 def encerrar_votacao():
@@ -234,7 +234,9 @@ def menu_gerenciamento():
             case "4":
                 termo = input("Digite o nome ou titulo: ")
                 buscar_eleitor(termo)
-            case "5": print("Listando todos os eleitores...")
+            case "5":
+                print("Listando todos os eleitores...")
+                listar_eleitores()
             case "6": menu_candidatos()
             case "7": print("Voltando ao menu principal...")
             case _:   print("Opcao invalida, tente novamente.")
