@@ -29,14 +29,14 @@ def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
     nome = input("Nome completo: ")
     
     titulo = input("Titulo de eleitor: ")  #Pede e verifica se o titulo é valido.
-    if not validar_titulo(titulo):
+    while not validar_titulo(titulo):
         print("Título inválido!")
-        return
+        titulo = input("Titulo de eleitor: ")
 
     cpf = input("CPF (apenas números): ") #Pede e verifica se o cpf é valido.
-    if not validação_de_cpf(cpf):
+    while not validação_de_cpf(cpf):
         print("CPF inválido!")
-        return
+        cpf = input("CPF (apenas números): ")
 
     pergunta=input("Voce atuára como mesario? (S/N): ") #Verifica se vai ser mesariou ou não.
     pergunta= pergunta.lower()

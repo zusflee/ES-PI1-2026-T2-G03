@@ -7,10 +7,10 @@ import mysql.connector
 def criar_conexao():
     try:
         conexao = mysql.connector.connect(
-        host='BD-ACD',
-        user='BD25022615',
-        password='Epsfi1',
-        database='BD25022615'
+        host='127.0.0.1',
+        user='root',
+        password='Cabo2015@',
+        database='sistema_eleitoral'
     )
         
         cursor = conexao.cursor()
