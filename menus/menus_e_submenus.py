@@ -291,8 +291,9 @@ def menu_gerenciamento():
             case "2": editar_eleitor()
             case "3": remover_eleitor()
             case "4":
-                termo = input("Digite o nome ou titulo: ")
-                buscar_eleitor(termo)
+                    print("----------------------")
+                    termo = input("Digite o CPF ou Título: ")
+                    buscar_eleitor(termo)
             case "5":
                 print("Listando todos os eleitores...")
                 listar_eleitores()

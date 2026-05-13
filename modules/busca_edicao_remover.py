@@ -5,21 +5,22 @@ from database.conexao_SQL import criar_conexao
 
 def exibir_eleitor(eleitor):
     print(f"\nEleitor:")
-    print(f"ID      : {eleitor[0]}")
-    print(f"Nome    : {eleitor[1]}")
-    print(f"Titulo  : {eleitor[2]}")
-    print(f"CPF     : {eleitor[3]}")
-    print(f"Mesario : {'Sim' if eleitor[5] == 1 else 'Nao'}")
-    print(f"Votou   : {'Sim' if eleitor[6] == 'Já Votou' else 'Nao'}")
+    print(f"ID           : {eleitor[0]}")
+    print(f"Nome         : {eleitor[1]}")
+    print(f"Titulo       : {eleitor[2]}")
+    print(f"CPF          : {eleitor[3]}")
+    print(f"Chave Acesso : {eleitor[4]}")
+    print(f"Mesario      : {'Sim' if eleitor[5] == 1 else 'Nao'}")
+    print(f"Votou        : {'Sim' if eleitor[6] == 'Ja Votou' else 'Nao'}")
 
 
 '''Buscar eleitor por ID (uso interno)'''
 
 def buscar_por_id(cursor, id_eleitor):
     cursor.execute("""
-        SELECT id, nome, titulo, cpf, is_mesario, status_voto
+        SELECT id, nome, titulo, cpf, chave_acesso, is_mesario, status_voto
         FROM eleitores WHERE id = %s
-    """, (id_eleitor,))
+        """, (id_eleitor,))
     return cursor.fetchone()
 
 
@@ -32,9 +33,9 @@ def buscar_eleitor(termo):
 
     try:
         sql = """
-            SELECT id, nome, titulo, cpf, is_mesario, status_voto
-            FROM eleitores WHERE nome = %s OR titulo = %s
-        """
+            SELECT id, nome, titulo, cpf, chave_acesso, is_mesario, status_voto
+            FROM eleitores WHERE cpf = %s OR titulo = %s
+            """
         cursor.execute(sql, (termo, termo))
         resultado = cursor.fetchall()
 
@@ -185,13 +186,14 @@ def remover_eleitor():
 
 def listar_eleitores():
     conexao, cursor = criar_conexao()
+    if conexao == None:
+        return
 
     try:
         cursor.execute("""
-            SELECT id, nome, titulo, cpf, is_mesario, status_voto
-            FROM eleitores
-            ORDER BY nome
-        """)
+            SELECT id, nome, titulo, cpf, chave_acesso, is_mesario, status_voto
+            FROM eleitores ORDER BY nome
+            """)
         eleitores = cursor.fetchall()
 
         # Verifica se existe pelo menos um eleitor cadastrado
