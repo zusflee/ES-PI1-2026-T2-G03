@@ -1,5 +1,7 @@
 ''' --- MENUS E SUBMENUS --- '''
 
+# Gera protocolo com título do eleitor + número do candidato + hora atual
+from datetime import datetime
 from modules.CadastroEleitorNEW import cadastrar_eleitor as cadastrar_eleitor_db
 from database.conexao_SQL import criar_conexao
 from modules.busca_edicao_remover import buscar_eleitor, editar_eleitor, remover_eleitor
@@ -150,10 +152,13 @@ def fluxo_voto():
             print("Opcao invalida. Digite apenas S ou N.")
 
     if confirma == "S":
+        # Gerar protocolo único
+        protocolo = f"{titulo}{candidato[2]}{eleitor[0]}"
+
         # Registrar voto
         cursor.execute(
-            "INSERT INTO votos (id_eleitor, id_candidato) VALUES (%s, %s)",
-            (eleitor[0], candidato[0])
+            "INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)",
+            (candidato[0],protocolo)
         )
         # Atualizar contagem do candidato
         cursor.execute(
@@ -162,7 +167,7 @@ def fluxo_voto():
         )
         # Marcar eleitor como já votou
         cursor.execute(
-            "UPDATE eleitores SET status_votos = 'Ja Votou' WHERE titulo = %s",
+            "UPDATE eleitores SET status_voto = 'Ja Votou' WHERE titulo = %s",
             (titulo,)
         )
         conexao.commit()
@@ -220,16 +225,8 @@ def menu_urna():
 def login_mesario():
     print("\n--- [LOGIN DO MESARIO] ---")
 
-    nome = ""
-    chave_de_acesso = ""
-    while nome == "" or chave_de_acesso == "":
-        nome = input("Nome: ")
-        chave_de_acesso = input("Chave de acesso: ")
-        if nome == "" or chave_de_acesso == "":
-            print("[ERRO] Nome ou chave de acesso invalidos. Tente novamente.")
-
     conexao, cursor = criar_conexao()
-    
+
     if not conexao or not cursor:
         print("[ERRO] Falha na conexão com o banco de dados.")
         return
@@ -238,7 +235,7 @@ def login_mesario():
 
     cursor.close()
     conexao.close()
-    
+
     if autenticado:
         print("[SUCESSO] Login realizado com sucesso!")
         menu_urna()
@@ -260,11 +257,7 @@ def menu_votacao():
 
         match opcao_voto:
             case "1":
-                eh_mesario = input("Voce e o mesario? (S/N): ").upper()
-                if eh_mesario == "S":
-                    login_mesario()
-                else:
-                    print("O sistema ainda nao foi aberto por um mesario.")
+                login_mesario()
             case "2": menu_auditoria()
             case "3": menu_resultados()
             case "4": print("Voltando ao menu principal...")
