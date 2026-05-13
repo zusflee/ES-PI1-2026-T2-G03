@@ -9,8 +9,8 @@ def exibir_eleitor(eleitor):
     print(f"Nome    : {eleitor[1]}")
     print(f"Titulo  : {eleitor[2]}")
     print(f"CPF     : {eleitor[3]}")
-    print(f"Mesario : {'Sim' if eleitor[4] == 1 else 'Nao'}")
-    print(f"Votou   : {'Sim' if eleitor[5] == 1 else 'Nao'}")
+    print(f"Mesario : {'Sim' if eleitor[5] == 1 else 'Nao'}")
+    print(f"Votou   : {'Sim' if eleitor[6] == 'Já Votou' else 'Nao'}")
 
 
 '''Buscar eleitor por ID (uso interno)'''
