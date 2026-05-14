@@ -2,6 +2,7 @@ from modules.ValidaçãoTituloNEW import validar_titulo
 from modules.Validação_de_cpf import validação_de_cpf
 from database.conexao_SQL import criar_conexao
 import random
+from logs.sistemas_de_logs import registrar_cadastro_eleitor, registrar_cadastro_mesario
 import mysql.connector
 
 
@@ -26,7 +27,11 @@ def gerar_chave(nome):
 
 def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
     print("\n--- CADASTRO DE ELEITOR ---")
-    nome = input("Nome completo: ")
+    nome = input("Nome completo: ").strip()
+
+    if len(nome.split()) < 2:
+        print("Erro: Digite nome e sobrenome.")
+        return
     
     titulo = input("Titulo de eleitor: ")  #Pede e verifica se o titulo é valido.
     while not validar_titulo(titulo):
@@ -42,8 +47,10 @@ def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
     pergunta= pergunta.lower()
     if pergunta == 's':
       mesario=True
+      registrar_cadastro_mesario(nome, titulo)
     else:
       mesario=False
+      registrar_cadastro_eleitor(nome, titulo)
 
     # Verificação se já existe no banco.
     cursor.execute("SELECT * FROM eleitores WHERE cpf = %s OR titulo = %s", (cpf, titulo))
@@ -58,6 +65,8 @@ def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
     
     # Salva as alterações no banco.'
     conexao.commit()
+
+
 
     print("\n--- CADASTRO REALIZADO ---")
     print(f"  Nome  : {nome}")
