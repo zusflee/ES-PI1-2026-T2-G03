@@ -12,6 +12,13 @@ from database.atualizar_partido import atualizar_partido
 from modules.busca_edicao_remover import listar_eleitores
 from modules.abertura_urna import abertura_urna
 
+from logs.sistemas_de_logs import (
+    exibir_logs,
+    registrar_alerta_voto_duplo,
+    registrar_voto_sucesso,
+    registrar_encerramento
+)
+
 # //// SUBMENU DE AUDITORIA ////
 def menu_auditoria():
     opcao_auditoria = ""
@@ -24,7 +31,7 @@ def menu_auditoria():
         opcao_auditoria = input("\nEscolha uma opcao: ")
 
         match opcao_auditoria:
-            case "1": print("Lendo arquivos de log...")
+            case "1": print("Lendo arquivos de log..."),exibir_logs()
             case "2": print("Buscando protocolos de votacao no banco de dados...")
             case "3": print("Voltando ao menu Votacao...")
             case _: print("Opcao invalida, tente novamente.")
@@ -136,10 +143,11 @@ def fluxo_voto():
 
     # Verificar se já votou
     if eleitor[6] == "Já Votou": 
-        print("Eleitor já realizou a votação.")
-        cursor.close()
-        conexao.close()
-        return
+            registrar_alerta_voto_duplo(titulo)
+            print("Eleitor já realizou a votação.")
+            cursor.close()
+            conexao.close()
+            return
 
 #-------------candidato--------------
     voto_finalizado = False
@@ -186,6 +194,7 @@ def fluxo_voto():
                 (titulo,)
             )
             conexao.commit()
+            registrar_voto_sucesso(protocolo)
             print("[SUCESSO] Voto registrado com sucesso!")
         # Se confirma == "N", o while volta a rodar (pede número de novo)
 
@@ -215,6 +224,7 @@ def encerrar_votacao():
 
     print("Encerrando sistema de votacao...")
     print("[SUCESSO] Votacao encerrada!")
+    registrar_encerramento()
     menu_resultados()
 
 # //// MENU DA URNA ////

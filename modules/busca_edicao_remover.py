@@ -1,5 +1,5 @@
 from database.conexao_SQL import criar_conexao
-
+from logs.sistemas_de_logs import registrar_alteracao_usuario, registrar_exclusao_usuario
 
 '''Função de exibir eleitor'''
 
@@ -113,20 +113,55 @@ def editar_eleitor():
 
         coluna, pergunta = campos[opcao_campo]
 
+        nome_atual = eleitor[1]
+        titulo_atual = eleitor[2]
+        tipo = "Mesário" if eleitor[5] == 1 else "Eleitor"
+
+        campo_log = ""
+        valor_antigo_log = ""
+        valor_novo_log = ""
+
         if opcao_campo == "4":
             novo_valor = ""
             while novo_valor not in ["S", "N"]:
                 novo_valor = input(pergunta).upper()
                 if novo_valor not in ["S", "N"]:
                     print("[ERRO] Digite apenas S ou N.")
+            valor_antigo_log = "Sim" if eleitor[5] == 1 else "Nao"
             novo_valor = 1 if novo_valor == "S" else 0
+            valor_novo_log = "Sim" if novo_valor == 1 else "Nao"
+            campo_log = "mesario"
         else:
             novo_valor = input(pergunta).strip()
+            if not novo_valor:
+                print("[ERRO] Valor invalido.")
+            return 0
+
+            if coluna == "nome":
+                valor_antigo_log = eleitor[1]
+                campo_log = "nome"
+            elif coluna == "titulo":
+                valor_antigo_log = eleitor[2]
+                campo_log = "titulo"
+            elif coluna == "cpf":
+                valor_antigo_log = eleitor[3]
+                campo_log = "cpf"
+
+        valor_novo_log = novo_valor
 
         sql = f"UPDATE eleitores SET {coluna} = %s WHERE id = %s"
         cursor.execute(sql, (novo_valor, id_eleitor))
         conexao.commit()
 
+        if cursor.rowcount > 0:
+            registrar_alteracao_usuario(
+                tipo,
+                nome_atual,
+                titulo_atual,
+                campo_log,
+                valor_antigo_log,
+                valor_novo_log
+            )
         print("\n--- Dados atualizados ---")
         exibir_eleitor(buscar_por_id(cursor, id_eleitor))
 
@@ -165,9 +200,14 @@ def remover_eleitor():
             if confirma not in ["S", "N"]:
                 print("[ERRO] Digite apenas S ou N.")
 
+
         if confirma == "S":
+            nome = eleitor[1]
+            titulo_eleitor = eleitor[2]
+            tipo = "Mesário" if eleitor[5] == 1 else "Eleitor"
             cursor.execute("DELETE FROM eleitores WHERE id = %s", (id_eleitor,))
             conexao.commit()
+            registrar_exclusao_usuario(tipo, nome, titulo_eleitor)
             print("Eleitor removido com sucesso!")
             return 1
         
