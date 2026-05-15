@@ -2,7 +2,8 @@ import os
 from datetime import datetime
 
 ARQUIVO_LOG = os.path.join(os.path.dirname(__file__), "log_ocorrencias.txt")
-    
+with open(ARQUIVO_LOG, "w", encoding="utf-8") as arquivo:
+    arquivo.write("INICIO DA VOTAÇÃO\n")    
 
 def registrar_log(mensagem):
     agora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
