@@ -105,76 +105,89 @@ def fluxo_voto():
         print("[ERRO] Sem conexão com o banco.")
         return
 
-    titulo = ""
-    while titulo == "":
-        titulo = input("Informe o Título de Eleitor: ")
-        if titulo == "":
-            print("[ERRO] Título inválido. Tente novamente.")
+    #---------------eleitor-------------
 
-    # Buscar eleitor no banco
+    # validação titulo
+    titulo = input("Digite seu título eleitoral: ")
     cursor.execute("SELECT * FROM eleitores WHERE titulo = %s", (titulo,))
     eleitor = cursor.fetchone()
-
-    if not eleitor:
-        print("Eleitor não encontrado.")
+    if eleitor is None:
+        print("Credenciais inválidas. Acesso negado.")
         cursor.close()
         conexao.close()
         return
+
+    #validação cpf
+    cmc_cpf = input("Digite os 4 primeiros dígitos do CPF: ")
+    if eleitor[3][:4] != cmc_cpf:
+        print("Credenciais inválidas. Acesso negado.")
+        cursor.close()
+        conexao.close()
+        return
+
+    #validar chave de acesso
+    chave_acesso = input("Digite sua chave de acesso: ")
+    if eleitor[4] != chave_acesso:
+        print("Credenciais inválidas. Acesso negado.")
+        cursor.close()
+        conexao.close()
+        return
+
 
     # Verificar se já votou
-    if eleitor[6] == "Ja Votou": 
-        print(f"[ERRO] O eleitor {eleitor[1]} já votou!")
+    if eleitor[6] == "Já Votou": 
+        print("Eleitor já realizou a votação.")
         cursor.close()
         conexao.close()
         return
 
-    numero = input("Digite o numero do candidato: ")
+#-------------candidato--------------
+    voto_finalizado = False
+    while not voto_finalizado:
+        numero = input("Digite o numero do candidato: ")
 
-    # Buscar candidato
-    cursor.execute("SELECT * FROM candidatos WHERE numero = %s", (numero,))
-    candidato = cursor.fetchone()
+        # Buscar candidato
+        cursor.execute("SELECT * FROM candidatos WHERE numero = %s", (numero,))
+        candidato = cursor.fetchone()
 
-    if not candidato:
-        print("[ERRO] Candidato não encontrado.")
-        cursor.close()
-        conexao.close()
-        return
+        if not candidato:
+            print("Candidato não encontrado. Tente outro número.")
+            continue
 
-    print(f"\nCandidato encontrado:")
-    print(f"Numero  : {candidato[2]}")
-    print(f"Nome    : {candidato[1]}")
-    print(f"Partido : {candidato[3]}")
+        print(f"\nCandidato encontrado:")
+        print(f"Numero  : {candidato[2]}")
+        print(f"Nome    : {candidato[1]}")
+        print(f"Partido : {candidato[3]}")
 
-    confirma = ""
-    while confirma not in ["S", "N"]:
-        confirma = input("\nConfirmar voto? (S/N): ").upper()
-        if confirma not in ["S", "N"]:
-            print("Opcao invalida. Digite apenas S ou N.")
+        confirma = ""
+        while confirma not in ["S", "N"]:
+            confirma = input("\nConfirmar voto? (S/N): ").upper()
+            if confirma not in ["S", "N"]:
+                print("Opcao invalida. Digite apenas S ou N.")
 
-    if confirma == "S":
-        # Gerar protocolo único
-        protocolo = f"{titulo}{candidato[2]}{eleitor[0]}"
+        if confirma == "S":
+            voto_finalizado = True
+            # Gerar protocolo único
+            protocolo = f"{titulo}{candidato[2]}{eleitor[0]}"
 
-        # Registrar voto
-        cursor.execute(
-            "INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)",
-            (candidato[0],protocolo)
-        )
-        # Atualizar contagem do candidato
-        cursor.execute(
-            "UPDATE candidatos SET total_votos = total_votos + 1 WHERE id = %s",
-            (candidato[0],)
-        )
-        # Marcar eleitor como já votou
-        cursor.execute(
-            "UPDATE eleitores SET status_voto = 'Ja Votou' WHERE titulo = %s",
-            (titulo,)
-        )
-        conexao.commit()
-        print("[SUCESSO] Voto registrado com sucesso!")
-
-    elif confirma == "N":
-        print("Voto cancelado. Voltando ao Menu Urna...")
+            # Registrar voto
+            cursor.execute(
+                "INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)",
+                (candidato[0], protocolo)
+            )
+            # Atualizar contagem do candidato
+            cursor.execute(
+                "UPDATE candidatos SET total_votos = total_votos + 1 WHERE id = %s",
+                (candidato[0],)
+            )
+            # Marcar eleitor como já votou
+            cursor.execute(
+                "UPDATE eleitores SET status_voto = 'Já Votou' WHERE titulo = %s",
+                (titulo,)
+            )
+            conexao.commit()
+            print("[SUCESSO] Voto registrado com sucesso!")
+        # Se confirma == "N", o while volta a rodar (pede número de novo)
 
     cursor.close()
     conexao.close()

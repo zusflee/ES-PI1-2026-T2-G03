@@ -11,7 +11,7 @@ def exibir_eleitor(eleitor):
     print(f"CPF          : {eleitor[3]}")
     print(f"Chave Acesso : {eleitor[4]}")
     print(f"Mesario      : {'Sim' if eleitor[5] == 1 else 'Nao'}")
-    print(f"Votou        : {'Sim' if eleitor[6] == 'Ja Votou' else 'Nao'}")
+    print(f"Votou        : {'Sim' if eleitor[6] == 'Já Votou' else 'Nao'}")
 
 
 '''Buscar eleitor por ID (uso interno)'''
