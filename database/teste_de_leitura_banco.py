@@ -2,8 +2,7 @@ import mysql.connector
 
 from conexao_SQL import criar_conexao
 
-conexao = criar_conexao()
-cursor = conexao.cursor()
+conexao, cursor = criar_conexao()
 
 
 #Teste de leitura do banco    
