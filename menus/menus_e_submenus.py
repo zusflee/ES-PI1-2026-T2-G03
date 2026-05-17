@@ -118,27 +118,23 @@ def fluxo_voto():
     titulo = input("Digite seu título eleitoral: ")
     cursor.execute("SELECT * FROM eleitores WHERE titulo = %s", (titulo,))
     eleitor = cursor.fetchone()
-    if eleitor is None:
+    while eleitor is None:
         print("Credenciais inválidas. Acesso negado.")
-        cursor.close()
-        conexao.close()
-        return
+        titulo = input("Digite seu título eleitoral: ")
+        cursor.execute("SELECT * FROM eleitores WHERE titulo = %s", (titulo,))
+        eleitor = cursor.fetchone()
 
     #validação cpf
     cmc_cpf = input("Digite os 4 primeiros dígitos do CPF: ")
-    if eleitor[3][:4] != cmc_cpf:
+    while eleitor[3][:4] != cmc_cpf:
         print("Credenciais inválidas. Acesso negado.")
-        cursor.close()
-        conexao.close()
-        return
+        cmc_cpf = input("Digite os 4 primeiros dígitos do CPF: ")
 
     #validar chave de acesso
     chave_acesso = input("Digite sua chave de acesso: ")
-    if eleitor[4] != chave_acesso:
+    while eleitor[4] != chave_acesso:
         print("Credenciais inválidas. Acesso negado.")
-        cursor.close()
-        conexao.close()
-        return
+        chave_acesso = input("Digite sua chave de acesso: ")
 
 
     # Verificar se já votou
