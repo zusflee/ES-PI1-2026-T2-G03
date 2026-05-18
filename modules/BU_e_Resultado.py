@@ -2,7 +2,7 @@ from database.conexao_SQL import criar_conexao
 def boletim_urna(cursor):
     print("\n--- BOLETIM DE URNA ---")
 
-    # RF002.03.02 — lista candidatos em ordem alfabética com votos
+    ## lista candidatos em ordem alfabética com votos
     cursor.execute("SELECT * FROM candidatos ORDER BY nome ASC")
     candidatos = cursor.fetchall()
 
@@ -14,7 +14,7 @@ def boletim_urna(cursor):
     for candidato in candidatos:
         print(f"Nome: {candidato[1]} | Número: {candidato[2]} | Partido: {candidato[3]} | Votos: {candidato[4]}")
 
-    # RF002.03.03 — declara o vencedor
+    #Responsavel por mostrar o vencedor
     cursor.execute("SELECT * FROM candidatos ORDER BY total_votos DESC LIMIT 1")
     vencedor = cursor.fetchone()
 
@@ -25,7 +25,7 @@ def boletim_urna(cursor):
 def votos_por_partido(cursor):
     print("\n--- VOTOS POR PARTIDO ---")
 
-    # RF002.03.05 — soma de votos por partido
+    # realiza a soma de votos por partido
     cursor.execute("SELECT partido, SUM(total_votos) FROM candidatos GROUP BY partido ORDER BY partido ASC")
     partidos = cursor.fetchall()
 
@@ -40,7 +40,7 @@ def votos_por_partido(cursor):
 def estatistica_comparecimento(cursor):
     print("\n--- ESTATÍSTICA DE COMPARECIMENTO ---")
 
-    # RF002.03.04 — quantas pessoas votaram e percentual
+    #  quantas pessoas votaram e percentual
     cursor.execute("SELECT COUNT(*) FROM eleitores")
     total_eleitores = cursor.fetchone()[0]
 
@@ -61,7 +61,7 @@ def estatistica_comparecimento(cursor):
 def validacao_integridade(cursor):
     print("\n--- VALIDAÇÃO DE INTEGRIDADE ---")
 
-    # RF002.03.06 — compara votos na urna com eleitores que já votaram
+    # compara votos na urna com eleitores que já votaram
     cursor.execute("SELECT COUNT(*) FROM votos")
     total_votos_urna = cursor.fetchone()[0]
 
