@@ -1,5 +1,6 @@
 from database.conexao_SQL import criar_conexao
 from logs.sistemas_de_logs import registrar_abertura, registrar_alerta_acesso
+from modules.utilidades import limpar_tela
 def zerézima(cursor, conexao):
     
 

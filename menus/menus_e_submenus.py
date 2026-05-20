@@ -1,6 +1,7 @@
 ''' --- MENUS E SUBMENUS --- '''
 
 # Gera protocolo com título do eleitor + número do candidato + hora atual
+import os
 from datetime import datetime
 from modules.CadastroEleitorNEW import cadastrar_eleitor as cadastrar_eleitor_db
 from database.conexao_SQL import criar_conexao
@@ -11,6 +12,8 @@ from database.delete_cand import deletar_candidato
 from database.atualizar_partido import atualizar_partido
 from modules.busca_edicao_remover import listar_eleitores
 from modules.abertura_urna import abertura_urna
+from modules.utilidades import limpar_tela
+from logs.sistemas_de_logs import registrar_voto_sucesso    
 
 from logs.sistemas_de_logs import (
     exibir_logs,
@@ -132,6 +135,7 @@ def fluxo_voto():
 
     #validar chave de acesso
     chave_acesso = input("Digite sua chave de acesso: ")
+    limpar_tela()
     while eleitor[4] != chave_acesso:
         print("Credenciais inválidas. Acesso negado.")
         chave_acesso = input("Digite sua chave de acesso: ")
@@ -155,8 +159,25 @@ def fluxo_voto():
         candidato = cursor.fetchone()
 
         if not candidato:
-            print("Candidato não encontrado. Tente outro número.")
-            continue
+            confirma_nulo = ""
+            while confirma_nulo not in ["S", "N"]:
+                confirma_nulo = input("\nCandidato não encontrado. Deseja confirmar voto NULO? (S/N): ").upper()
+                if confirma_nulo not in ["S", "N"]:
+                    print("Opção inválida. Digite apenas S ou N.")
+
+            if confirma_nulo == "N":
+                continue
+
+                # Registra voto nulo
+                protocolo = f"{titulo}NULO{eleitor[0]}"
+                cursor.execute("INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)",(None, protocolo))
+                cursor.execute("UPDATE eleitores SET status_voto = 'Já Votou' WHERE titulo = %s",(titulo,))
+                conexao.commit()
+                print("\n[VOTO NULO REGISTRADO]")
+                print(f"Protocolo: {protocolo}")
+                input("\nPressione Enter para continuar...")
+                voto_finalizado = True
+                continue
 
         print(f"\nCandidato encontrado:")
         print(f"Numero  : {candidato[2]}")
