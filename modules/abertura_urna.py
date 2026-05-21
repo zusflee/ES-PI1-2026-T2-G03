@@ -9,6 +9,7 @@ def zerézima(cursor, conexao):
     cursor.execute("DELETE FROM votos") #Toda esta area esta responsavel por limpar e zerar os registros
     cursor.execute("UPDATE candidatos SET total_votos = 0")
     cursor.execute("UPDATE eleitores SET status_voto ='Não Votou'")
+    cursor.execute("UPDATE eleitores SET status_voto = 'Pendente'")
     conexao.commit()
     print("Registro de Votação limpos com sucesso!")
 
