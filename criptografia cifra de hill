@@ -1,0 +1,45 @@
+# nossa lista com as letras e numeros para a conta
+alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+def criptografia_dados(texto):
+    
+    # deixando tudo maiusculo e tirando os pontos e tracos do cpf
+    texto = texto.upper()
+    texto = texto.replace("-", "")
+    texto = texto.replace(".", "")
+    
+    # a cifra de hill precisa de grupos de 2 em 2
+    # se o texto for impar eu coloco um X no final pra fechar o par
+    if len(texto) % 2 != 0:
+        texto = texto + "X"
+        
+    texto_cifrado = ""
+    
+    # laco pra andar pelo texto pulando de 2 em 2
+    for i in range(0, len(texto), 2):
+        
+        # pegando o par de letras da vez
+        letra1 = texto[i]
+        letra2 = texto[i+1]
+        
+        # achando a posicao delas no alfabeto (ex: A=0, B=1...)
+        posicao1 = alfabeto.find(letra1)
+        posicao2 = alfabeto.find(letra2)
+        
+        # aqui e a conta da cifra de hill usando a nossa chave fixa
+        # o % 36 serve pro resultado nao passar do tamanho do alfabeto
+        nova_posicao1 = (5 * posicao1 + 8 * posicao2) % 36
+        nova_posicao2 = (17 * posicao1 + 3 * posicao2) % 36
+        
+        # transformando os numeros de volta em letras
+        nova_letra1 = alfabeto[nova_posicao1]
+        nova_letra2 = alfabeto[nova_posicao2]
+        
+        # juntando tudo na variavel final
+        texto_cifrado = texto_cifrado + nova_letra1 + nova_letra2
+        
+    return texto_cifrado
+
+# testando pra ver se ta funcionando
+print("CPF:", criptografia_dados("12345678901"))
+print("Chave:", criptografia_dados("ANS4821"))
