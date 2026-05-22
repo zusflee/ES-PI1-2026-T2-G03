@@ -14,6 +14,7 @@ from modules.busca_edicao_remover import listar_eleitores
 from modules.abertura_urna import abertura_urna
 from modules.utilidades import limpar_tela
 from logs.sistemas_de_logs import registrar_voto_sucesso    
+from cripto.criptogafia_descripto import criptografia_dados, descriptografia_dados
 
 from logs.sistemas_de_logs import (
     exibir_logs,
@@ -128,15 +129,17 @@ def fluxo_voto():
         eleitor = cursor.fetchone()
 
     #validação cpf
+    cpf_real = descriptografia_dados(eleitor[3])      # abre o cpf cifrado do banco para comparar com o que o eleitor digitar
     cmc_cpf = input("Digite os 4 primeiros dígitos do CPF: ")
-    while eleitor[3][:4] != cmc_cpf:
+    while cpf_real[:4] != cmc_cpf:                    # compara com o cpf real (descriptografado) para validar o acesso, sem expor o CPF completo
         print("Credenciais inválidas. Acesso negado.")
         cmc_cpf = input("Digite os 4 primeiros dígitos do CPF: ")
 
     #validar chave de acesso
+    chave_real = descriptografia_dados(eleitor[4])    # abre a chave de acesso cifrada do banco para comparar com o que o eleitor digitar
     chave_acesso = input("Digite sua chave de acesso: ")
     limpar_tela()
-    while eleitor[4] != chave_acesso:
+    while chave_real != chave_acesso:                 # compara com a chave real (descriptografada) para validar o acesso, sem expor a chave completa
         print("Credenciais inválidas. Acesso negado.")
         chave_acesso = input("Digite sua chave de acesso: ")
 
@@ -192,13 +195,12 @@ def fluxo_voto():
 
         if confirma == "S":
             voto_finalizado = True
-            # Gerar protocolo único
-            protocolo = f"{titulo}{candidato[2]}{eleitor[0]}"
+            protocolo = f"{titulo}{candidato[2]}{eleitor[0]}"   # protocolo é gerado com título do eleitor + número do candidato + id do eleitor
+            protocolo_cifrado = criptografia_dados(protocolo)   # cifra o protocolo antes de gravar no banco, garantindo que dados sensíveis não fiquem expostos no banco
 
-            # Registrar voto
             cursor.execute(
                 "INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)",
-                (candidato[0], protocolo)
+                (candidato[0], protocolo_cifrado)               # onde o protocolo é gravado cifrado, garantindo que dados sensíveis não fiquem expostos no banco
             )
             # Atualizar contagem do candidato
             cursor.execute(

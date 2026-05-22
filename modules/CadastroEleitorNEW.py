@@ -4,6 +4,7 @@ from database.conexao_SQL import criar_conexao
 import random
 from logs.sistemas_de_logs import registrar_cadastro_eleitor, registrar_cadastro_mesario
 import mysql.connector
+from cripto.criptogafia_descripto import criptografia_dados, descriptografia_dados              
 
 
 
@@ -37,41 +38,46 @@ def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
         print("Título inválido!")
         titulo = input("Titulo de eleitor: ")
 
-    cpf = input("CPF (apenas números): ") #Pede e verifica se o cpf é valido.
+    cpf = input("CPF (apenas números): ")
     while not validação_de_cpf(cpf):
         print("CPF inválido!")
         cpf = input("CPF (apenas números): ")
 
-    pergunta=input("Voce atuára como mesario? (S/N): ") #Verifica se vai ser mesariou ou não.
-    pergunta= pergunta.lower()
-    if pergunta == 's':
-      mesario=True
-      registrar_cadastro_mesario(nome, titulo)
-    else:
-      mesario=False
-      registrar_cadastro_eleitor(nome, titulo)
+    # CRIPTO: cifra o CPF validado antes de usar no banco, para manter a segurança dos dados sensíveis
+    cpf_cifrado = criptografia_dados(cpf)   
 
-    # Verificação se já existe no banco.
-    cursor.execute("SELECT * FROM eleitores WHERE cpf = %s OR titulo = %s", (cpf, titulo))
+    pergunta = input("Voce atuára como mesario? (S/N): ")
+    pergunta = pergunta.lower()
+    if pergunta == 's':
+        mesario = True
+        registrar_cadastro_mesario(nome, titulo)
+    else:
+        mesario = False
+        registrar_cadastro_eleitor(nome, titulo)
+
+    # Verificação se já existe no banco (compara o CPF JÁ CIFRADO)
+    cursor.execute(
+        "SELECT * FROM eleitores WHERE cpf = %s OR titulo = %s",
+        (cpf_cifrado, titulo)                    # <-- CRIPTO: usa o CPF cifrado, não o puro
+    )
     if cursor.fetchone():
         print("Eleitor já cadastrado com este CPF ou título!")
         return
 
     chave = gerar_chave(nome)
-    
+    chave_cifrada = criptografia_dados(chave)  # cifra a chave de acesso antes de guardar no banco, para manter a segurança
+
     sql = "INSERT INTO eleitores (nome, titulo, cpf, is_mesario, chave_acesso) VALUES (%s, %s, %s, %s, %s)"
-    cursor.execute(sql, (nome, titulo, cpf, mesario, chave))
-    
-    # Salva as alterações no banco.'
+    # aqui o CPF e a chave de acesso são inseridos já cifrados, garantindo que dados sensíveis não fiquem expostos no banco
+    cursor.execute(sql, (nome, titulo, cpf_cifrado, mesario, chave_cifrada))
+
     conexao.commit()
-
-
 
     print("\n--- CADASTRO REALIZADO ---")
     print(f"  Nome  : {nome}")
     print(f"  Título: {titulo}")
-    print(f"  CPF   : {cpf}")
-    print(f"  Chave : {chave}")
+    print(f"  CPF   : {cpf}")      # cpf será exibido em texto puro para o eleitor, mas armazenado cifrado no banco
+    print(f"  Chave : {chave}")    # chave será exibida em texto puro para o eleitor, mas armazenada cifrada no banco
     print("--------------------------\n")
 
 
