@@ -1,5 +1,8 @@
 def validar_titulo(titulo):
-    titulo = ''.join(filter(str.isdigit, titulo))
+    titulo = titulo.strip()       # remove espaços das bordas
+    
+    if not titulo.isdigit():      # rejeita letras e caracteres especiais
+        return False
 
     if len(titulo) != 12:#Vai efetuar a verifiação para ver se tem 12 digitos 
         return False

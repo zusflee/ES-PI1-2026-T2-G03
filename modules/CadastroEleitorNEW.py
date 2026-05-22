@@ -28,8 +28,8 @@ def gerar_chave(nome):
 def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
     print("\n--- CADASTRO DE ELEITOR ---")
     nome = input("Nome completo: ").strip()
-    while len(nome.split()) < 2:
-        print("Erro: Digite nome e sobrenome.")
+    while len(nome.split()) < 2 or not nome.replace(" ", "").isalpha():
+        print("Erro: Digite nome e sobrenome (apenas letras).")
         nome = input("Nome completo: ").strip()
     
     titulo = input("Titulo de eleitor: ")  #Pede e verifica se o titulo é valido.

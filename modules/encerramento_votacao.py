@@ -47,7 +47,7 @@ def encerramento_votacao(cursor, conexao):
     chave_confirmacao = input("Digite sua chave de acesso novamente para confirmar: ")
 
     
-    if chave_confirmacao != chave_acesso:
+    if chave_confirmacao != eleitor[4]:
         print("Chave de acesso incorreta. Encerramento cancelado!")
         return False
 
