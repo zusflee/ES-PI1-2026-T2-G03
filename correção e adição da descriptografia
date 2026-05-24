@@ -1,0 +1,89 @@
+import mysql.connector
+
+from database.conexao_SQL import criar_conexao
+ 
+# nossa lista com as letras e numeros para a conta
+alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+ 
+def criptografia_dados(text):
+    # deixando tudo maiusculo e tirando os pontos e tracos do cpf
+    text = text.upper()
+    text = text.replace("-", "")
+    text= text.replace(".", "")
+ 
+    # a cifra de hill precisa de grupos de 2 em 2
+    # se o texto for impar entra um X no final pra fechar o par
+    if len(text) % 2 != 0:
+        text = text + "X"
+ 
+    text_cifrado = ""
+ 
+    # laco pra ir pulando de 2 em 2
+    for i in range(0, len(text), 2):
+ 
+        # pegando o par de letras da vez
+        letra1 = text[i]
+        letra2 = text[i+1]
+ 
+        # achando a posicao delas no alfabeto 
+        p1 = alfabeto.find(letra1)
+        p2 = alfabeto.find(letra2)
+ 
+        # se o caractere nao for encontrado no alfabeto, mantém como está
+        if p1 == -1 or p2 == -1:
+            text_cifrado += letra1 + letra2
+            continue
+ 
+        # o % 36 serve pro resultado nao passar do tamanho do alfabeto
+        nova_p1 = (5 * p1 + 8 * p2) % 36
+        nova_p2 = (17 * p1 + 3 * p2) % 36
+ 
+        # transformando os numeros de volta em letras
+        nova_letra1 = alfabeto[nova_p1]
+        nova_letra2 = alfabeto[nova_p2]
+ 
+        # juntando as letras cifradas no resultado final
+        text_cifrado += nova_letra1 + nova_letra2
+ 
+    return text_cifrado
+ 
+ 
+def descriptografia_dados(text_cifrado):
+    # deixando tudo maiusculo 
+    text_cifrado = text_cifrado.upper()
+ 
+    text_decifrado = ""
+ 
+    # laco pra ir de 2 em 2
+    for i in range(0, len(text_cifrado), 2):
+ 
+        # pegando o par de letras cifradas da vez
+        letra1 = text_cifrado[i]
+        letra2 = text_cifrado[i+1]
+ 
+        # achando a posicao delas no alfabeto
+        p1 = alfabeto.find(letra1)
+        p2 = alfabeto.find(letra2)
+ 
+        # se o caractere nao for encontrado no alfabeto, mantém como está
+        if p1 == -1 or p2 == -1:
+            text_decifrado += letra1 + letra2
+            continue
+ 
+        #  conta inversa da cifra de hill usando a matriz inversa da chave
+        # a matriz inversa a partir da chave original:
+        # chave original:  [[5, 8], [17, 3]]
+        # matriz inversa:  [[33, 20], [29, 19]]  (mod 36)
+        # o % 36 serve pro resultado nao passar do tamanho do alfabeto
+        p_origin1 = (33 * p1 + 20 * p2) % 36
+        p_origin2 = (29 * p1 + 19 * p2) % 36
+ 
+        # transformando os numeros de volta nas letras originais
+        letra_origin1 = alfabeto[p_origin1]
+        letra_origin2 = alfabeto[p_origin2]
+ 
+        # juntando as letras decifradas no resultado final
+        text_decifrado += letra_origin1 + letra_origin2
+ 
+    return text_decifrado
+  
