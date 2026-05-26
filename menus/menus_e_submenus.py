@@ -37,7 +37,16 @@ def menu_auditoria():
 
         match opcao_auditoria:
             case "1": print("Lendo arquivos de log..."),exibir_logs()
-            case "2": print("Buscando protocolos de votacao no banco de dados...")
+            case "2":
+                conexao, cursor = criar_conexao()
+                if conexao and cursor:
+                    cursor.execute("SELECT protocolo FROM votos")
+                    protocolos = cursor.fetchall()
+                    print("\n--- PROTOCOLOS DE VOTACAO ---")
+                    for p in protocolos:
+                        print(descriptografia_dados(p[0]))
+                        cursor.close()
+                        conexao.close()
             case "3": print("Voltando ao menu Votacao...")
             case _: print("Opcao invalida, tente novamente.")
 

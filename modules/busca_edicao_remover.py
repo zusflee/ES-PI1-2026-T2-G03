@@ -1,17 +1,18 @@
 from database.conexao_SQL import criar_conexao
 from logs.sistemas_de_logs import registrar_alteracao_usuario, registrar_exclusao_usuario
+from cripto.criptogafia_descripto import descriptografia_dados
 
 '''Função de exibir eleitor'''
 
 def exibir_eleitor(eleitor):
     print(f"\nEleitor:")
-    print(f"ID           : {eleitor[0]}")
-    print(f"Nome         : {eleitor[1]}")
-    print(f"Titulo       : {eleitor[2]}")
-    print(f"CPF          : {eleitor[3]}")
-    print(f"Chave Acesso : {eleitor[4]}")
-    print(f"Mesario      : {'Sim' if eleitor[5] == 1 else 'Nao'}")
-    print(f"Votou        : {'Sim' if eleitor[6] == 'Já Votou' else 'Nao'}")
+    print(f"ID      : {eleitor[0]}")
+    print(f"Nome    : {eleitor[1]}")
+    print(f"Titulo  : {eleitor[2]}")
+    print(f"CPF     : {descriptografia_dados(eleitor[3])}")
+    print(f"Chave   : {descriptografia_dados(eleitor[4])}")
+    print(f"Mesario : {'Sim' if eleitor[5] == 1 else 'Nao'}")
+    print(f"Votou   : {eleitor[6]}")
 
 
 '''Buscar eleitor por ID (uso interno)'''
