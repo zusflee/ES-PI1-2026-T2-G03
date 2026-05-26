@@ -15,6 +15,7 @@ from modules.abertura_urna import abertura_urna
 from modules.utilidades import limpar_tela
 from logs.sistemas_de_logs import registrar_voto_sucesso    
 from cripto.criptogafia_descripto import criptografia_dados, descriptografia_dados
+from modules.BU_e_Resultado import boletim_urna, votos_por_partido, estatistica_comparecimento, validacao_integridade
 
 from logs.sistemas_de_logs import (
     exibir_logs,
@@ -54,12 +55,34 @@ def menu_resultados():
         opcao_resultado = input("\nEscolha uma opcao: ")
 
         match opcao_resultado:
-            case "1": print("Gerando boletim da urna...")
-            case "2": print("Buscando votos por partido no banco de dados...")
-            case "3": print("Calculando estatisticas de comparecimento...")
-            case "4": print("Validando integridade dos dados...")
-            case "5": print("Voltando ao menu Votacao...")
-            case _: print("Opcao invalida, tente novamente.")
+            case "1":
+                conexao, cursor = criar_conexao()
+                if conexao and cursor:
+                    boletim_urna(cursor)
+                    cursor.close()
+                    conexao.close()
+            case "2":
+                conexao, cursor = criar_conexao()
+                if conexao and cursor:
+                    votos_por_partido(cursor)
+                    cursor.close()
+                    conexao.close()
+            case "3":
+                conexao, cursor = criar_conexao()
+                if conexao and cursor:
+                    estatistica_comparecimento(cursor)
+                    cursor.close()
+                    conexao.close()
+            case "4":
+                conexao, cursor = criar_conexao()
+                if conexao and cursor:
+                    validacao_integridade(cursor)
+                    cursor.close()
+                    conexao.close()
+            case "5":
+                print("Voltando ao menu Votacao...")
+            case _:
+                print("Opcao invalida, tente novamente.")
 
 # //// MENU DE CANDIDATOS ////
 def menu_candidatos():
@@ -138,7 +161,7 @@ def fluxo_voto():
     #validar chave de acesso
     chave_real = descriptografia_dados(eleitor[4])    # abre a chave de acesso cifrada do banco para comparar com o que o eleitor digitar
     chave_acesso = input("Digite sua chave de acesso: ")
-    limpar_tela()
+    
     while chave_real != chave_acesso:                 # compara com a chave real (descriptografada) para validar o acesso, sem expor a chave completa
         print("Credenciais inválidas. Acesso negado.")
         chave_acesso = input("Digite sua chave de acesso: ")

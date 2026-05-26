@@ -15,15 +15,20 @@ def zerézima(cursor, conexao):
 
     cursor.execute("SELECT  * FROM candidatos")
     candidatos = cursor.fetchall()
-
-    print("\n--- CANDIDATOS REGISTRADOS ---")
     
-    for candidato in candidatos: #area responsavel por listar os candidatos
-        print(f"Nome: {candidato[1]}")
-        print(f"Numero:{candidato[2]}")
-        print(f"Partido:{candidato[3]}")
-        print(f"Votos: 0")
+    total = len(candidatos)
+    print(f"\n{'=' * 50}")
+    print(f"  CANDIDATOS REGISTRADOS ({total} candidato(s))")
+    print(f"{'=' * 50}")
 
+    for candidato in candidatos:
+        print(f"\n  Candidato:")
+        print(f"  {'ID':<15}: {candidato[0]}")
+        print(f"  {'Nome':<15}: {candidato[1]}")
+        print(f"  {'Numero':<15}: {candidato[2]}")
+        print(f"  {'Partido':<15}: {candidato[3]}")
+        print(f"  {'Votos':<15}: {candidato[4]}")
+        print("  " + "-" * 40)
     print("\nZerézima concluida com sucesso! A urna esta vazia e pronta para a votação!")
     return True
 

@@ -74,7 +74,8 @@ def validacao_integridade(cursor):
     if total_votos_urna == total_ja_votou:
         print("Eleição integra! Os números coincidem.")
     else:
-        print("ATENÇÃO! Os números não coincidem. Possível inconsistência!")
+        diferenca = abs(total_votos_urna - total_ja_votou)
+        print(f"ATENCAO! Inconsistencia detectada! Diferenca de {diferenca} registro(s).")
              
     
 
