@@ -1,4 +1,5 @@
 from database.conexao_SQL import criar_conexao
+from cripto.criptogafia_descripto import descriptografia_dados
 
 def encerramento_votacao(cursor, conexao):
     titulo = input("Digite seu titulo de eleitor: ")        # pede o titulo
@@ -14,15 +15,16 @@ def encerramento_votacao(cursor, conexao):
         return False
 
 
-    if eleitor[3][:4] != cmc_cpf: #vai verificar se os 4 primeiros numeros do cpf estao corretos
-        print("Dados incorretos. A validação falhou!")
-        return False
+    cpf_real = descriptografia_dados(eleitor[3])
+    while cpf_real[:4] != cmc_cpf:
+        print("CPF incorreto. Tente novamente.")
+        cmc_cpf = input("Digite os 4 primeiros dígitos do CPF: ")
 
-
-    if eleitor[4] != chave_acesso: #vai verificar se a chave de acesso esta correta
-        print("Dados incorretos. A validação falhou!")
-        return False
-
+        
+    chave_real = descriptografia_dados(eleitor[4])
+    while chave_real != chave_acesso:
+        print("Chave de acesso incorreta. Tente novamente.")
+        chave_acesso = input("Digite sua chave de acesso: ")
 
     if not eleitor[5]: #vai verificar se tem cadastro de mesario
         print("Erro. Este eleitor não possui perfil de mesário!")
@@ -47,9 +49,8 @@ def encerramento_votacao(cursor, conexao):
     chave_confirmacao = input("Digite sua chave de acesso novamente para confirmar: ")
 
     
-    if chave_confirmacao != eleitor[4]:
+    if chave_confirmacao != chave_real:
         print("Chave de acesso incorreta. Encerramento cancelado!")
-        return False
 
     print("\nVotação encerrada com sucesso!")
     return True

@@ -13,13 +13,22 @@ def boletim_urna(cursor):
     print("\nCandidatos:")
     for candidato in candidatos:
         print(f"Nome: {candidato[1]} | Número: {candidato[2]} | Partido: {candidato[3]} | Votos: {candidato[4]}")
+    
+    cursor.execute("SELECT COUNT(*) FROM votos WHERE id_candidato IS NULL")
+    votos_nulos = cursor.fetchone()[0]
+    print(f"Votos Nulos: {votos_nulos}")
 
     #Responsavel por mostrar o vencedor
-    cursor.execute("SELECT * FROM candidatos ORDER BY total_votos DESC LIMIT 1")
-    vencedor = cursor.fetchone()
+    cursor.execute("SELECT * FROM candidatos ORDER BY total_votos DESC LIMIT 2")
+    top2 = cursor.fetchall()
 
-    print(f"\n--- VENCEDOR ---")
-    print(f"Nome: {vencedor[1]} | Número: {vencedor[2]} | Partido: {vencedor[3]} | Votos: {vencedor[4]}")
+    if len(top2) >= 2 and top2[0][4] == top2[1][4]:
+        print(f"\n--- EMPATE ---")
+        print("Não há vencedor definido. Houve empate!")
+    else:
+        vencedor = top2[0]
+        print(f"\n--- VENCEDOR ---")
+        print(f"Nome: {vencedor[1]} | Número: {vencedor[2]} | Partido: {vencedor[3]} | Votos: {vencedor[4]}")
 
 
 def votos_por_partido(cursor):
