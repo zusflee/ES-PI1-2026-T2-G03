@@ -1,6 +1,7 @@
 from database.conexao_SQL import criar_conexao
 from logs.sistemas_de_logs import registrar_abertura, registrar_alerta_acesso
 from modules.utilidades import limpar_tela
+from cripto.criptogafia_descripto import descriptografia_dados
 def zerézima(cursor, conexao):
     
 
@@ -33,8 +34,6 @@ def zerézima(cursor, conexao):
     return True
 
 
-
-
 def abertura_urna(cursor, conexao):
     print("\n--- ABERTURA DO SISTEMA DE VOTAÇÃO ---")
     registrar_abertura()
@@ -49,20 +48,20 @@ def abertura_urna(cursor, conexao):
             print("Título não encontrado. Tente novamente.")
 
     # Loop dos 4 primeiros dígitos do CPF
+    cpf_real = descriptografia_dados(eleitor[3])
     cmc_cpf = ""
-    while eleitor[3][:4] != cmc_cpf:
+    while cpf_real[:4] != cmc_cpf:
         cmc_cpf = input("Digite os 4 primeiros dígitos do CPF: ")
-        if eleitor[3][:4] != cmc_cpf:
-            registrar_alerta_acesso("CPF incorreto na abertura da urna.")
-            print("CPF incorreto. Tente novamente.")
+        if cpf_real[:4] != cmc_cpf:
+                print("CPF incorreto. Tente novamente.")
 
-    # Loop da chave de acesso
+    # Loop da chave de acesso]
+    chave_real = descriptografia_dados(eleitor[4])
     chave_acesso = ""
-    while eleitor[4] != chave_acesso:
+    while chave_real != chave_acesso:
         chave_acesso = input("Digite sua chave de acesso: ")
-        if eleitor[4] != chave_acesso:
-            registrar_alerta_acesso("Chave de acesso incorreta na abertura da urna.")
-            print("Chave de acesso incorreta. Tente novamente.")
+        if chave_real != chave_acesso:
+                print("Chave de acesso incorreta. Tente novamente.")
 
     # Verifica se é mesário
     if not eleitor[5]:

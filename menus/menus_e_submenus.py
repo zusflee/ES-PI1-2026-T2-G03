@@ -16,6 +16,7 @@ from modules.utilidades import limpar_tela
 from logs.sistemas_de_logs import registrar_voto_sucesso    
 from cripto.criptogafia_descripto import criptografia_dados, descriptografia_dados
 from modules.BU_e_Resultado import boletim_urna, votos_por_partido, estatistica_comparecimento, validacao_integridade
+from modules.encerramento_votacao import encerramento_votacao
 
 from logs.sistemas_de_logs import (
     exibir_logs,
@@ -42,11 +43,23 @@ def menu_auditoria():
                 if conexao and cursor:
                     cursor.execute("SELECT protocolo FROM votos")
                     protocolos = cursor.fetchall()
-                    print("\n--- PROTOCOLOS DE VOTACAO ---")
-                    for p in protocolos:
-                        print(descriptografia_dados(p[0]))
-                        cursor.close()
-                        conexao.close()
+                nomes = []
+                protos = []
+                for p in protocolos:
+                    proto = descriptografia_dados(p[0])
+                    titulo_eleitor = proto[:12]
+                    cursor.execute("SELECT nome FROM eleitores WHERE titulo = %s", (titulo_eleitor,))
+                    resultado = cursor.fetchone()
+                    nome = resultado[0] if resultado else "Voto Nulo"
+                    nomes.append(nome)
+                    protos.append(proto)
+
+                # Ordena junto pelo nome
+                combinado = sorted(zip(nomes, protos))
+
+                print("\n--- PROTOCOLOS DE VOTACAO ---")
+                for nome, proto in combinado:
+                    print(f"{nome}: {proto}")
             case "3": print("Voltando ao menu Votacao...")
             case _: print("Opcao invalida, tente novamente.")
 
@@ -202,51 +215,55 @@ def fluxo_voto():
 
             if confirma_nulo == "N":
                 continue
-
+            if confirma_nulo == "S":
                 # Registra voto nulo
                 protocolo = f"{titulo}NULO{eleitor[0]}"
-                cursor.execute("INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)",(None, protocolo))
+                protocolo_cifrado = criptografia_dados(protocolo)
+                cursor.execute("INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)",(None, protocolo_cifrado))
                 cursor.execute("UPDATE eleitores SET status_voto = 'Já Votou' WHERE titulo = %s",(titulo,))
                 conexao.commit()
+                registrar_voto_sucesso(protocolo)
                 print("\n[VOTO NULO REGISTRADO]")
                 print(f"Protocolo: {protocolo}")
                 input("\nPressione Enter para continuar...")
                 voto_finalizado = True
                 continue
+        else:
+            print(f"\nCandidato encontrado:")
+            print(f"Numero  : {candidato[2]}")
+            print(f"Nome    : {candidato[1]}")
+            print(f"Partido : {candidato[3]}")
 
-        print(f"\nCandidato encontrado:")
-        print(f"Numero  : {candidato[2]}")
-        print(f"Nome    : {candidato[1]}")
-        print(f"Partido : {candidato[3]}")
-
-        confirma = ""
-        while confirma not in ["S", "N"]:
-            confirma = input("\nConfirmar voto? (S/N): ").upper()
+            confirma = ""
+            while confirma not in ["S", "N"]:
+                confirma = input("\nConfirmar voto? (S/N): ").upper()
             if confirma not in ["S", "N"]:
                 print("Opcao invalida. Digite apenas S ou N.")
 
-        if confirma == "S":
-            voto_finalizado = True
-            protocolo = f"{titulo}{candidato[2]}{eleitor[0]}"   # protocolo é gerado com título do eleitor + número do candidato + id do eleitor
-            protocolo_cifrado = criptografia_dados(protocolo)   # cifra o protocolo antes de gravar no banco, garantindo que dados sensíveis não fiquem expostos no banco
+            if confirma == "S":
+                voto_finalizado = True
+                protocolo = f"{titulo}{candidato[2]}{eleitor[0]}"   # protocolo é gerado com título do eleitor + número do candidato + id do eleitor
+                protocolo_cifrado = criptografia_dados(protocolo)   # cifra o protocolo antes de gravar no banco, garantindo que dados sensíveis não fiquem expostos no banco
 
-            cursor.execute(
+                cursor.execute(
                 "INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)",
                 (candidato[0], protocolo_cifrado)               # onde o protocolo é gravado cifrado, garantindo que dados sensíveis não fiquem expostos no banco
             )
             # Atualizar contagem do candidato
-            cursor.execute(
+                cursor.execute(
                 "UPDATE candidatos SET total_votos = total_votos + 1 WHERE id = %s",
                 (candidato[0],)
             )
             # Marcar eleitor como já votou
-            cursor.execute(
+                cursor.execute(
                 "UPDATE eleitores SET status_voto = 'Já Votou' WHERE titulo = %s",
                 (titulo,)
             )
-            conexao.commit()
-            registrar_voto_sucesso(protocolo)
-            print("[SUCESSO] Voto registrado com sucesso!")
+                conexao.commit()
+                registrar_voto_sucesso(protocolo)
+                print("[SUCESSO] Voto registrado com sucesso!")
+                print(f"\nSeu protocolo de votação: {protocolo}")  
+                input("\nPressione Enter para continuar...")        
         # Se confirma == "N", o while volta a rodar (pede número de novo)
 
     cursor.close()
@@ -255,28 +272,16 @@ def fluxo_voto():
 
 # //// FLUXO DE ENCERRAR VOTACAO ////
 def encerrar_votacao():
-    print("\n--- [ENCERRAR VOTACAO] ---")
-
-    confirma = ""
-    while confirma not in ["S", "N"]:
-        confirma = input("Deseja realmente encerrar a votacao? (S/N): ").upper()
-        if confirma not in ["S", "N"]:
-            print("Opcao invalida. Digite apenas S ou N.")
-
-    if confirma == "N":
-        print("Operacao cancelada. Voltando ao Menu Urna...")
+    conexao, cursor = criar_conexao()
+    if not conexao or not cursor:
+        print("[ERRO] Sem conexão com o banco.")
         return
-
-    chave = ""
-    while chave == "":
-        chave = input("Confirme a chave de encerramento: ")
-        if chave == "":
-            print("[ERRO] Chave invalida. Tente novamente.")
-
-    print("Encerrando sistema de votacao...")
-    print("[SUCESSO] Votacao encerrada!")
-    registrar_encerramento()
-    menu_resultados()
+    resultado = encerramento_votacao(cursor, conexao)
+    cursor.close()
+    conexao.close()
+    if resultado:
+        registrar_encerramento()
+        menu_resultados()
 
 # //// MENU DA URNA ////
 def menu_urna():
@@ -291,7 +296,9 @@ def menu_urna():
 
         match opcao_urna:
             case "1": fluxo_voto()
-            case "2": encerrar_votacao()
+            case "2":
+                encerrar_votacao()
+                opcao_urna = "3"
             case "3": print("Voltando ao menu anterior...")
             case _: print("Opcao invalida, tente novamente.")
 
