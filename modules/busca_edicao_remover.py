@@ -136,7 +136,7 @@ def editar_eleitor():
             novo_valor = input(pergunta).strip()
             if not novo_valor:
                 print("[ERRO] Valor invalido.")
-            return 0
+                return 0
 
             if coluna == "nome":
                 valor_antigo_log = eleitor[1]

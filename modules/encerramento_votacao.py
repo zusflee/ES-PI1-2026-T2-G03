@@ -51,6 +51,6 @@ def encerramento_votacao(cursor, conexao):
     
     if chave_confirmacao != chave_real:
         print("Chave de acesso incorreta. Encerramento cancelado!")
-
+        return False
     print("\nVotação encerrada com sucesso!")
     return True

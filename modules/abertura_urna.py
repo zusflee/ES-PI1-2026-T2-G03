@@ -10,7 +10,6 @@ def zerézima(cursor, conexao):
     cursor.execute("DELETE FROM votos") #Toda esta area esta responsavel por limpar e zerar os registros
     cursor.execute("UPDATE candidatos SET total_votos = 0")
     cursor.execute("UPDATE eleitores SET status_voto ='Não Votou'")
-    cursor.execute("UPDATE eleitores SET status_voto = 'Pendente'")
     conexao.commit()
     print("Registro de Votação limpos com sucesso!")
 
@@ -36,8 +35,7 @@ def zerézima(cursor, conexao):
 
 def abertura_urna(cursor, conexao):
     print("\n--- ABERTURA DO SISTEMA DE VOTAÇÃO ---")
-    registrar_abertura()
-    # Loop do título
+   # Loop do título
     eleitor = None
     while eleitor is None:
         titulo = input("Digite seu título eleitoral: ")
@@ -53,15 +51,17 @@ def abertura_urna(cursor, conexao):
     while cpf_real[:4] != cmc_cpf:
         cmc_cpf = input("Digite os 4 primeiros dígitos do CPF: ")
         if cpf_real[:4] != cmc_cpf:
-                print("CPF incorreto. Tente novamente.")
+            registrar_alerta_acesso("CPF incorreto na abertura da urna.")
+            print("CPF incorreto. Tente novamente.")
 
-    # Loop da chave de acesso]
+    # Loop da chave de acesso
     chave_real = descriptografia_dados(eleitor[4])
     chave_acesso = ""
     while chave_real != chave_acesso:
         chave_acesso = input("Digite sua chave de acesso: ")
         if chave_real != chave_acesso:
-                print("Chave de acesso incorreta. Tente novamente.")
+            registrar_alerta_acesso("Chave de acesso incorreta na abertura da urna.")
+            print("Chave de acesso incorreta. Tente novamente.")
 
     # Verifica se é mesário
     if not eleitor[5]:
@@ -71,6 +71,6 @@ def abertura_urna(cursor, conexao):
 
     print(f"Bem vindo, {eleitor[1]}! Identidade validada com sucesso!")
     zerézima(cursor, conexao)
-    
+    registrar_abertura() 
     return True
     

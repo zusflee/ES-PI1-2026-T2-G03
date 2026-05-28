@@ -17,13 +17,13 @@ from logs.sistemas_de_logs import registrar_voto_sucesso
 from cripto.criptogafia_descripto import criptografia_dados, descriptografia_dados
 from modules.BU_e_Resultado import boletim_urna, votos_por_partido, estatistica_comparecimento, validacao_integridade
 from modules.encerramento_votacao import encerramento_votacao
-
 from logs.sistemas_de_logs import (
     exibir_logs,
     registrar_alerta_voto_duplo,
     registrar_voto_sucesso,
     registrar_encerramento
 )
+from modules.protocolo import gerar_protocolo
 
 # //// SUBMENU DE AUDITORIA ////
 def menu_auditoria():
@@ -43,23 +43,24 @@ def menu_auditoria():
                 if conexao and cursor:
                     cursor.execute("SELECT protocolo FROM votos")
                     protocolos = cursor.fetchall()
-                nomes = []
-                protos = []
-                for p in protocolos:
-                    proto = descriptografia_dados(p[0])
-                    titulo_eleitor = proto[:12]
-                    cursor.execute("SELECT nome FROM eleitores WHERE titulo = %s", (titulo_eleitor,))
-                    resultado = cursor.fetchone()
-                    nome = resultado[0] if resultado else "Voto Nulo"
-                    nomes.append(nome)
-                    protos.append(proto)
+                    cursor.close()
+                    conexao.close()
 
-                # Ordena junto pelo nome
-                combinado = sorted(zip(nomes, protos))
+                    protos = []
+                    for p in protocolos:
+                        protos.append(descriptografia_dados(p[0]))
 
-                print("\n--- PROTOCOLOS DE VOTACAO ---")
-                for nome, proto in combinado:
-                    print(f"{nome}: {proto}")
+                    # Ordem alfabética dos próprios protocolos (RF002.02.02)
+                    protos.sort()
+
+                    print("\n--- PROTOCOLOS DE VOTACAO ---")
+                    if not protos:
+                        print("Nenhum protocolo registrado ainda.")
+                    else:
+                        for proto in protos:
+                            print(proto)
+                else:
+                    print("[ERRO] Sem conexão com o banco.")
             case "3": print("Voltando ao menu Votacao...")
             case _: print("Opcao invalida, tente novamente.")
 
@@ -217,7 +218,7 @@ def fluxo_voto():
                 continue
             if confirma_nulo == "S":
                 # Registra voto nulo
-                protocolo = f"{titulo}NULO{eleitor[0]}"
+                protocolo = gerar_protocolo(0)  
                 protocolo_cifrado = criptografia_dados(protocolo)
                 cursor.execute("INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)",(None, protocolo_cifrado))
                 cursor.execute("UPDATE eleitores SET status_voto = 'Já Votou' WHERE titulo = %s",(titulo,))
@@ -242,7 +243,7 @@ def fluxo_voto():
 
             if confirma == "S":
                 voto_finalizado = True
-                protocolo = f"{titulo}{candidato[2]}{eleitor[0]}"   # protocolo é gerado com título do eleitor + número do candidato + id do eleitor
+                protocolo = gerar_protocolo(candidato[2])  
                 protocolo_cifrado = criptografia_dados(protocolo)   # cifra o protocolo antes de gravar no banco, garantindo que dados sensíveis não fiquem expostos no banco
 
                 cursor.execute(
