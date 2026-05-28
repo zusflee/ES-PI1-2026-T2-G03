@@ -58,7 +58,7 @@ def abertura_urna(cursor, conexao):
     chave_real = descriptografia_dados(eleitor[4])
     chave_acesso = ""
     while chave_real != chave_acesso:
-        chave_acesso = input("Digite sua chave de acesso: ")
+        chave_acesso = input("Digite sua chave de acesso: ").upper()
         if chave_real != chave_acesso:
             registrar_alerta_acesso("Chave de acesso incorreta na abertura da urna.")
             print("Chave de acesso incorreta. Tente novamente.")

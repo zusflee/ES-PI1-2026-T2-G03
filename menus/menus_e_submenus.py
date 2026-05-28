@@ -29,6 +29,7 @@ from modules.protocolo import gerar_protocolo
 def menu_auditoria():
     opcao_auditoria = ""
     while opcao_auditoria != "3":
+        limpar_tela()
         print("\n--- [AUDITORIA] ---")
         print("1. Ver Logs")
         print("2. Ver Protocolos")
@@ -37,7 +38,10 @@ def menu_auditoria():
         opcao_auditoria = input("\nEscolha uma opcao: ")
 
         match opcao_auditoria:
-            case "1": print("Lendo arquivos de log..."),exibir_logs()
+            case "1": 
+                print("Lendo arquivos de log...")
+                exibir_logs()
+                input("\nPressione Enter para continuar...")
             case "2":
                 conexao, cursor = criar_conexao()
                 if conexao and cursor:
@@ -61,13 +65,19 @@ def menu_auditoria():
                             print(proto)
                 else:
                     print("[ERRO] Sem conexão com o banco.")
-            case "3": print("Voltando ao menu Votacao...")
-            case _: print("Opcao invalida, tente novamente.")
+                input("\nPressione Enter para continuar...")
+            case "3": 
+                print("Voltando ao menu Votacao...")
+                input("\nPressione Enter para continuar...")
+            case _: 
+                print("Opcao invalida, tente novamente.")
+                input("\nPressione Enter para continuar...")
 
 # //// SUBMENU DE RESULTADOS ////
 def menu_resultados():
     opcao_resultado = ""
     while opcao_resultado != "5":
+        limpar_tela()
         print("\n--- [RESULTADOS] ---")
         print("1. Boletim da Urna")
         print("2. Votos por Partido")
@@ -84,33 +94,40 @@ def menu_resultados():
                     boletim_urna(cursor)
                     cursor.close()
                     conexao.close()
+                    input("\nPressione Enter para continuar...")
             case "2":
                 conexao, cursor = criar_conexao()
                 if conexao and cursor:
                     votos_por_partido(cursor)
                     cursor.close()
                     conexao.close()
+                    input("\nPressione Enter para continuar...")
             case "3":
                 conexao, cursor = criar_conexao()
                 if conexao and cursor:
                     estatistica_comparecimento(cursor)
                     cursor.close()
                     conexao.close()
+                    input("\nPressione Enter para continuar...")
             case "4":
                 conexao, cursor = criar_conexao()
                 if conexao and cursor:
                     validacao_integridade(cursor)
                     cursor.close()
                     conexao.close()
+                    input("\nPressione Enter para continuar...")
             case "5":
                 print("Voltando ao menu Votacao...")
+                input("\nPressione Enter para continuar...")
             case _:
                 print("Opcao invalida, tente novamente.")
+                input("\nPressione Enter para continuar...")
 
 # //// MENU DE CANDIDATOS ////
 def menu_candidatos():
     opcao = ""
     while opcao != "5":
+        limpar_tela()
         print("\n--- [CANDIDATOS] ---")
         print("1. Inserir Candidato")
         print("2. Buscar Candidato")
@@ -129,18 +146,21 @@ def menu_candidatos():
                 inserir_candidatos(conexao, cursor, nome, numero, partido)
                 cursor.close()    
                 conexao.close()
+                input("\nPressione Enter para continuar...")
             case "2":
                 conexao, cursor = criar_conexao()
                 nome = input("Nome do candidato: ")
                 buscar_candidato(cursor, nome)
                 cursor.close()    
                 conexao.close()
+                input("\nPressione Enter para continuar...")
             case "3":
                 conexao, cursor = criar_conexao()
                 numero = input("Numero do candidato: ")
                 deletar_candidato(conexao, cursor, numero)
                 cursor.close()    
                 conexao.close()
+                input("\nPressione Enter para continuar...")
             case "4":
                 conexao, cursor = criar_conexao()
                 numero     = input("Numero do candidato: ")
@@ -148,10 +168,13 @@ def menu_candidatos():
                 atualizar_partido(conexao, cursor, numero, novo_partido)
                 cursor.close()    
                 conexao.close()
+                input("\nPressione Enter para continuar...")
             case "5":
                 print("Voltando...")
+                input("\nPressione Enter para continuar...")
             case _:
                 print("Opcao invalida, tente novamente.")
+                input("\nPressione Enter para continuar...")
 
         
 
@@ -236,10 +259,10 @@ def fluxo_voto():
             print(f"Partido : {candidato[3]}")
 
             confirma = ""
+            confirma = input("\nConfirmar voto? (S/N): ").upper()
             while confirma not in ["S", "N"]:
-                confirma = input("\nConfirmar voto? (S/N): ").upper()
-            if confirma not in ["S", "N"]:
                 print("Opcao invalida. Digite apenas S ou N.")
+                confirma = input("\nConfirmar voto? (S/N): ").upper()
 
             if confirma == "S":
                 voto_finalizado = True
@@ -276,6 +299,7 @@ def encerrar_votacao():
     conexao, cursor = criar_conexao()
     if not conexao or not cursor:
         print("[ERRO] Sem conexão com o banco.")
+        input("\nPressione Enter para continuar...")
         return
     resultado = encerramento_votacao(cursor, conexao)
     cursor.close()
@@ -283,11 +307,14 @@ def encerrar_votacao():
     if resultado:
         registrar_encerramento()
         menu_resultados()
+    else:
+        print("[ERRO] Falha ao encerrar votação.")
 
 # //// MENU DA URNA ////
 def menu_urna():
     opcao_urna = ""
     while opcao_urna != "3":
+        limpar_tela()
         print("\n--- [MENU URNA] ---")
         print("1. Votar")
         print("2. Encerrar Votacao")
@@ -296,12 +323,17 @@ def menu_urna():
         opcao_urna = input("\nEscolha uma opcao: ")
 
         match opcao_urna:
-            case "1": fluxo_voto()
+            case "1": 
+                fluxo_voto()
             case "2":
                 encerrar_votacao()
                 opcao_urna = "3"
-            case "3": print("Voltando ao menu anterior...")
-            case _: print("Opcao invalida, tente novamente.")
+            case "3": 
+                input("\nPressione Enter para continuar...")
+                print("Voltando ao menu anterior...")
+            case _: 
+                print("Opcao invalida, tente novamente.")
+                input("\nPressione Enter para continuar...")
 
 # //// LOGIN DO MESARIO ////
 def login_mesario():
@@ -311,6 +343,7 @@ def login_mesario():
 
     if not conexao or not cursor:
         print("[ERRO] Falha na conexão com o banco de dados.")
+        input("\nPressione Enter para continuar...")
         return
 
     autenticado = abertura_urna(cursor, conexao)
@@ -320,6 +353,7 @@ def login_mesario():
 
     if autenticado:
         print("[SUCESSO] Login realizado com sucesso!")
+        input("\nPressione Enter para continuar...")
         menu_urna()
     else:
         print("[ERRO] Autenticação falhou. Voltando ao menu...")
@@ -329,6 +363,7 @@ def login_mesario():
 def menu_votacao():
     opcao_voto = ""
     while opcao_voto != "4":
+        limpar_tela()
         print("\n--- [VOTACAO] ---")
         print("1. Abrir Sistema de Votacao")
         print("2. Auditoria")
@@ -340,10 +375,17 @@ def menu_votacao():
         match opcao_voto:
             case "1":
                 login_mesario()
-            case "2": menu_auditoria()
-            case "3": menu_resultados()
-            case "4": print("Voltando ao menu principal...")
-            case _: print("Opcao invalida, tente novamente.")
+            case "2": 
+                menu_auditoria()
+            case "3": 
+                menu_resultados()
+            case "4": 
+                print("Voltando ao menu principal...")
+                input("\nPressione Enter para continuar...")
+            case _: 
+                print("Opcao invalida, tente novamente.")
+                input("\nPressione Enter para continuar...")
+
 
 # //// CADASTRAR ELEITOR ////
 def cadastrar_eleitor():
@@ -357,6 +399,7 @@ def cadastrar_eleitor():
 def menu_gerenciamento():
     opcao_gerenciamento = ""
     while opcao_gerenciamento != "7":
+        limpar_tela()
         print("\n--- [GERENCIAMENTO] ---")
         print("1. Cadastrar Eleitor")
         print("2. Editar Eleitor")
@@ -369,19 +412,32 @@ def menu_gerenciamento():
         opcao_gerenciamento = input("\nEscolha uma opcao: ")
 
         match opcao_gerenciamento:
-            case "1": cadastrar_eleitor()
-            case "2": editar_eleitor()
-            case "3": remover_eleitor()
+            case "1": 
+                cadastrar_eleitor()
+                input("\nPressione Enter para continuar...")
+            case "2": 
+                editar_eleitor()
+                input("\nPressione Enter para continuar...")
+            case "3": 
+                remover_eleitor()
+                input("\nPressione Enter para continuar...")
             case "4":
                     print("----------------------")
                     termo = input("Digite o CPF ou Título: ")
                     buscar_eleitor(termo)
+                    input("\nPressione Enter para continuar...")
             case "5":
                 print("Listando todos os eleitores...")
                 listar_eleitores()
-            case "6": menu_candidatos()
-            case "7": print("Voltando ao menu principal...")
-            case _:   print("Opcao invalida, tente novamente.")
+                input("\nPressione Enter para continuar...")
+            case "6": 
+                menu_candidatos()
+            case "7": 
+                print("Voltando ao menu principal...")
+                input("\nPressione Enter para continuar...")
+            case _:   
+                print("Opcao invalida, tente novamente.")
+                input("\nPressione Enter para continuar...")
 
 # //// INICIO DO SISTEMA ////
 def iniciar_sistema():
@@ -391,6 +447,7 @@ def iniciar_sistema():
     conexao.close()
     escolha = ""
     while escolha != "3":
+        limpar_tela()
         print("\n=== SISTEMA DE VOTACAO DIGITAL ===")
         print("1. Gerenciamento")
         print("2. Votacao")
@@ -399,10 +456,16 @@ def iniciar_sistema():
         escolha = input("\nEscolha uma opcao: ")
 
         match escolha:
-            case "1": menu_gerenciamento()
-            case "2": menu_votacao()
-            case "3": print("Encerrando o sistema...")
-            case _: print("Opcao invalida, tente novamente.")
+            case "1": 
+                menu_gerenciamento()
+            case "2":
+                menu_votacao()
+            case "3": 
+                input("\nPressione Enter para continuar...")
+                print("Encerrando o sistema...")
+            case _: 
+                print("Opcao invalida, tente novamente.")
+                input("\nPressione Enter para continuar...")
 
 if __name__ == "__main__":
     iniciar_sistema()

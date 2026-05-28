@@ -71,9 +71,10 @@ def editar_eleitor():
         id_eleitor = int(input("\nDigite o ID do eleitor: "))
 
         eleitor = buscar_por_id(cursor, id_eleitor)
-        if eleitor == None:
+        while eleitor is None:
             print("Nenhum eleitor encontrado com esse ID.")
-            return 0
+            id_eleitor = int(input("Digite o ID do eleitor: "))
+            eleitor = buscar_por_id(cursor, id_eleitor)
 
         print("\n--- Dados atuais ---")
         exibir_eleitor(eleitor)
@@ -188,9 +189,10 @@ def remover_eleitor():
         id_eleitor = int(input("\nDigite o ID do eleitor: "))
 
         eleitor = buscar_por_id(cursor, id_eleitor)
-        if eleitor == None:
+        while eleitor is None:
             print("Nenhum eleitor encontrado com esse ID.")
-            return 0
+            id_eleitor = int(input("Digite o ID do eleitor: "))
+            eleitor = buscar_por_id(cursor, id_eleitor)
 
         print("\n--- Eleitor encontrado ---")
         exibir_eleitor(eleitor)
@@ -198,8 +200,7 @@ def remover_eleitor():
         confirma = ""
         while confirma not in ["S", "N"]:
             confirma = input("\nConfirmar remocao? (S/N): ").upper()
-            if confirma not in ["S", "N"]:
-                print("[ERRO] Digite apenas S ou N.")
+            id_eleitor
 
 
         if confirma == "S":
