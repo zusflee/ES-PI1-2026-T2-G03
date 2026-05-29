@@ -1,18 +1,22 @@
-from database.conexao_SQL import criar_conexao
 import mysql.connector
 
-# Inserir candidatos no banco de dados
-
 def inserir_candidatos(conexao, cursor, nome, numero, partido):
-    '''Após o INSERT, chamamos conexao.commit() para salvar no banco.
-        Se der erro, fazemos rollback() para cancelar a operação.'''
-    
+    """
+    Insere um novo candidato na tabela do banco de dados e confirma a transação.
+
+    Args:
+        conexao (mysql.connector.connection): O objeto de conexão ativa com o banco.
+        cursor (mysql.connector.cursor): O cursor para execução de comandos SQL.
+        nome (str): O nome completo do candidato.
+        numero (int): O número eleitoral do candidato (chave de busca).
+        partido (str): A sigla ou nome do partido do candidato.
+    """
     try:
         sql = "INSERT INTO candidatos (nome, numero, partido) VALUES (%s, %s, %s)"
         valores = [nome, numero, partido]
 
         cursor.execute(sql, valores)
-        conexao.commit()  # Confirma a inserção no banco
+        conexao.commit()  
 
         print("\n--- CANDIDATO CADASTRADO ---")
         print(f"  Nome   : {nome}")
@@ -21,7 +25,5 @@ def inserir_candidatos(conexao, cursor, nome, numero, partido):
         print("----------------------------\n")
 
     except mysql.connector.Error as erro:
-        conexao.rollback()  # Desfaz a operação se der erro
+        conexao.rollback()  
         print(f"Erro ao inserir candidato: {erro}")
-
-        

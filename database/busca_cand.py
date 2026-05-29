@@ -1,14 +1,20 @@
-from database.conexao_SQL import criar_conexao
-
-# Buscar candidato pelo nome
-
 def buscar_candidato(cursor, nome):
-    '''O % antes do nome adiciona busca parcial (ex: "Jo" encontra "João").'''
-    '''O %s protege contra SQL injection (interfiram nas consultas)'''
-    sql = "SELECT * FROM candidatos WHERE nome LIKE %s"  # LIKE encontra: "João", "João Silva","João Carlos"
+    """
+    Busca candidatos no banco de dados através de uma correspondência parcial de nome.
+
+    Args:
+        cursor (mysql.connector.cursor): O cursor para execução de comandos SQL.
+        nome (str): O termo ou trecho do nome para realizar a busca (utiliza LIKE).
+
+    Returns:
+        list: Uma lista de tuplas contendo todos os registros encontrados.
+              Retorna uma lista vazia se nenhum candidato corresponder ao critério.
+    """
+    sql = "SELECT * FROM candidatos WHERE nome LIKE %s"  
     valor = [f"%{nome}%"]
+    
     cursor.execute(sql, valor)
-    resultados = cursor.fetchall()  # Pega todas as linhas encontradas
+    resultados = cursor.fetchall()  
 
     if resultados:
         for candidato in resultados:
@@ -20,5 +26,5 @@ def buscar_candidato(cursor, nome):
             print("----------------------------")
     else:
         print("Nenhum candidato encontrado com esse nome.")
+        
     return resultados
-

@@ -1,15 +1,23 @@
 import mysql.connector
 
 def deletar_candidato(conexao, cursor, numero_candidato):
+    """
+    Remove o registro de um candidato do banco de dados após confirmação manual do usuário.
+
+    Args:
+        conexao (mysql.connector.connection): O objeto de conexão ativa com o banco.
+        cursor (mysql.connector.cursor): O cursor para execução de comandos SQL.
+        numero_candidato (int): O número do candidato que será excluído do sistema.
+    """
     try:
         confirmacao = input(f"Tem certeza que deseja deletar o candidato nº {numero_candidato}? (s/n): ")
 
-        if confirmacao.lower() != "s":   # lower --> Converte todos os caracteres alfabéticos maiúsculos em uma string para minúscula. 
+        if confirmacao.lower() != "s":   
             print("Operação cancelada.")
-            return  # Sai da função sem fazer nada
+            return  
 
         sql = "DELETE FROM candidatos WHERE numero = %s"
-        valor = [numero_candidato]  # Lista com 1 elemento
+        valor = [numero_candidato]  
 
         cursor.execute(sql, valor)
         conexao.commit()

@@ -1,28 +1,26 @@
-# Conexão com o banco
 import mysql.connector
-''' import traz uma biblioteca externa para dentro do nosso código.
-    "mysql.connector" é o pacote que permite ligar o Python com MySQL.
-    Para instalar: pip install mysql-connector-python'''
 
 def criar_conexao():
+    """
+    Estabelece a conexão com o banco de dados MySQL local 'sistema_eleitoral'.
+
+    Returns:
+        tuple: Uma tupla contendo (conexao, cursor). 
+               Retorna (None, None) caso ocorra uma falha na conexão.
+    """
     try:
         conexao = mysql.connector.connect(
-        host='127.0.0.1',
-        user='root',
-        password='Cabo2015@',
-        database='sistema_eleitoral'
-    )
-        
+            host='127.0.0.1',
+            user='root',
+            password='Cabo2015@',
+            database='sistema_eleitoral'
+        )
         cursor = conexao.cursor()
         return conexao, cursor
     except mysql.connector.Error as erro:
-        print(f"Erro ao conectar{erro}:")
+        print(f"Erro ao conectar: {erro}")
         return None, None
 
-'''"try" significa: "tenta fazer isso; se der errado, vai pro except"
-    Usamos try/except aqui porque conexão com banco pode falhar'''
- 
-
-# Chama a função de teste ao rodar o arquivo
 if __name__ == "__main__":
+    # Nota: certifique-se de que a função teste_conexao() esteja definida se for testar isoladamente.
     teste_conexao()
