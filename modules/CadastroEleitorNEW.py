@@ -58,7 +58,7 @@ def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
     # Verificação se já existe no banco (compara o CPF JÁ CIFRADO)
     cursor.execute(
         "SELECT * FROM eleitores WHERE cpf = %s OR titulo = %s",
-        (cpf_cifrado, titulo)                    # <-- CRIPTO: usa o CPF cifrado, não o puro
+        [cpf_cifrado, titulo]                    #usa o CPF cifrado, não o puro
     )
     if cursor.fetchone():
         print("Eleitor já cadastrado com este CPF ou título!")
@@ -69,7 +69,7 @@ def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
 
     sql = "INSERT INTO eleitores (nome, titulo, cpf, is_mesario, chave_acesso) VALUES (%s, %s, %s, %s, %s)"
     # aqui o CPF e a chave de acesso são inseridos já cifrados, garantindo que dados sensíveis não fiquem expostos no banco
-    cursor.execute(sql, (nome, titulo, cpf_cifrado, mesario, chave_cifrada))
+    cursor.execute(sql, [nome, titulo, cpf_cifrado, mesario, chave_cifrada])
 
     conexao.commit()
 

@@ -54,7 +54,7 @@ def menu_auditoria():
                     for p in protocolos:
                         protos.append(descriptografia_dados(p[0]))
 
-                    # Ordem alfabética dos próprios protocolos (RF002.02.02)
+                    # Ordem alfabética dos próprios protocolos
                     protos.sort()
 
                     print("\n--- PROTOCOLOS DE VOTACAO ---")
@@ -189,12 +189,12 @@ def fluxo_voto():
 
     # validação titulo
     titulo = input("Digite seu título eleitoral: ")
-    cursor.execute("SELECT * FROM eleitores WHERE titulo = %s", (titulo,))
+    cursor.execute("SELECT * FROM eleitores WHERE titulo = %s", [titulo])
     eleitor = cursor.fetchone()
     while eleitor is None:
         print("Credenciais inválidas. Acesso negado.")
         titulo = input("Digite seu título eleitoral: ")
-        cursor.execute("SELECT * FROM eleitores WHERE titulo = %s", (titulo,))
+        cursor.execute("SELECT * FROM eleitores WHERE titulo = %s", [titulo])
         eleitor = cursor.fetchone()
 
     #validação cpf
@@ -227,7 +227,7 @@ def fluxo_voto():
         numero = input("Digite o numero do candidato: ")
 
         # Buscar candidato
-        cursor.execute("SELECT * FROM candidatos WHERE numero = %s", (numero,))
+        cursor.execute("SELECT * FROM candidatos WHERE numero = %s", [numero])
         candidato = cursor.fetchone()
 
         if not candidato:
@@ -244,7 +244,7 @@ def fluxo_voto():
                 protocolo = gerar_protocolo(0)  
                 protocolo_cifrado = criptografia_dados(protocolo)
                 cursor.execute("INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)",(None, protocolo_cifrado))
-                cursor.execute("UPDATE eleitores SET status_voto = 'Já Votou' WHERE titulo = %s",(titulo,))
+                cursor.execute("UPDATE eleitores SET status_voto = 'Já Votou' WHERE titulo = %s",[titulo])
                 conexao.commit()
                 registrar_voto_sucesso(protocolo)
                 print("\n[VOTO NULO REGISTRADO]")
@@ -271,17 +271,17 @@ def fluxo_voto():
 
                 cursor.execute(
                 "INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)",
-                (candidato[0], protocolo_cifrado)               # onde o protocolo é gravado cifrado, garantindo que dados sensíveis não fiquem expostos no banco
+                [candidato[0], protocolo_cifrado]               # onde o protocolo é gravado cifrado, garantindo que dados sensíveis não fiquem expostos no banco
             )
             # Atualizar contagem do candidato
                 cursor.execute(
                 "UPDATE candidatos SET total_votos = total_votos + 1 WHERE id = %s",
-                (candidato[0],)
+                [candidato[0]]
             )
             # Marcar eleitor como já votou
                 cursor.execute(
                 "UPDATE eleitores SET status_voto = 'Já Votou' WHERE titulo = %s",
-                (titulo,)
+                [titulo]
             )
                 conexao.commit()
                 registrar_voto_sucesso(protocolo)
@@ -296,19 +296,31 @@ def fluxo_voto():
 
 # //// FLUXO DE ENCERRAR VOTACAO ////
 def encerrar_votacao():
+    """
+    Wrapper que abre a conexao com o banco, chama a funcao de encerramento
+    e em caso de sucesso registra o log e abre o menu de resultados.
+
+    Returns:
+        bool: True se a votacao foi encerrada, False caso contrario.
+    """
     conexao, cursor = criar_conexao()
     if not conexao or not cursor:
-        print("[ERRO] Sem conexão com o banco.")
+        print("[ERRO] Sem conexao com o banco.")
         input("\nPressione Enter para continuar...")
-        return
+        return False
+
     resultado = encerramento_votacao(cursor, conexao)
     cursor.close()
     conexao.close()
+
     if resultado:
         registrar_encerramento()
         menu_resultados()
+        return True
     else:
-        print("[ERRO] Falha ao encerrar votação.")
+        print("[ERRO] Falha ao encerrar votacao.")
+        input("\nPressione Enter para continuar...")
+        return False
 
 # //// MENU DA URNA ////
 def menu_urna():
@@ -326,8 +338,8 @@ def menu_urna():
             case "1": 
                 fluxo_voto()
             case "2":
-                encerrar_votacao()
-                opcao_urna = "3"
+                if encerrar_votacao():
+                    opcao_urna = "3"
             case "3": 
                 input("\nPressione Enter para continuar...")
                 print("Voltando ao menu anterior...")
@@ -441,10 +453,15 @@ def menu_gerenciamento():
 
 # //// INICIO DO SISTEMA ////
 def iniciar_sistema():
+    print("Conectando ao banco de dados...")
     conexao, cursor = criar_conexao()
-    print("Conectado ao MySQL com êxito!") 
+    if not conexao or not cursor:
+        print("[ERRO] Falha ao conectar ao banco de dados. Verifique as configuracoes.")
+        return
+    print("[SUCESSO] Conectado ao banco!")
     cursor.close()
     conexao.close()
+
     escolha = ""
     while escolha != "3":
         limpar_tela()

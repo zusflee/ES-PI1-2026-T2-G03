@@ -1,6 +1,8 @@
 from database.conexao_SQL import criar_conexao
 from logs.sistemas_de_logs import registrar_alteracao_usuario, registrar_exclusao_usuario
-from cripto.criptogafia_descripto import descriptografia_dados
+from cripto.criptogafia_descripto import descriptografia_dados, criptografia_dados
+from modules.Validação_de_cpf import validação_de_cpf
+from modules.ValidaçãoTituloNEW import validar_titulo
 
 '''Função de exibir eleitor'''
 
@@ -33,11 +35,14 @@ def buscar_eleitor(termo):
         return []
 
     try:
+        # cifra o termo pra poder comparar com o cpf cifrado no banco
+        termo_cifrado = criptografia_dados(termo)
+
         sql = """
             SELECT id, nome, titulo, cpf, chave_acesso, is_mesario, status_voto
             FROM eleitores WHERE cpf = %s OR titulo = %s
             """
-        cursor.execute(sql, (termo, termo))
+        cursor.execute(sql, [termo_cifrado, termo])
         resultado = cursor.fetchall()
 
         if not resultado:
@@ -142,17 +147,51 @@ def editar_eleitor():
             if coluna == "nome":
                 valor_antigo_log = eleitor[1]
                 campo_log = "nome"
+
             elif coluna == "titulo":
+                # valida o titulo com a funcao oficial (RF001.05)
+                if not validar_titulo(novo_valor):
+                    print("[ERRO] Titulo invalido.")
+                    return 0
+
+                # verifica duplicidade: nao pode existir outro eleitor com o mesmo titulo
+                cursor.execute(
+                    "SELECT id FROM eleitores WHERE titulo = %s AND id != %s",
+                    [novo_valor, id_eleitor]
+                )
+                if cursor.fetchone() is not None:
+                    print("[ERRO] Ja existe outro eleitor com esse titulo.")
+                    return 0
+
                 valor_antigo_log = eleitor[2]
                 campo_log = "titulo"
+
             elif coluna == "cpf":
+                # valida o cpf com a funcao oficial (RF001.05)
+                if not validação_de_cpf(novo_valor):
+                    print("[ERRO] CPF invalido.")
+                    return 0
+
+                # cifra o CPF antes de salvar (mantem consistencia com o resto do banco)
+                novo_valor_cifrado = criptografia_dados(novo_valor)
+
+                # verifica duplicidade comparando cifrado com cifrado
+                cursor.execute(
+                    "SELECT id FROM eleitores WHERE cpf = %s AND id != %s",
+                    [novo_valor_cifrado, id_eleitor]
+                )
+                if cursor.fetchone() is not None:
+                    print("[ERRO] Ja existe outro eleitor com esse CPF.")
+                    return 0
+
                 valor_antigo_log = eleitor[3]
                 campo_log = "cpf"
-
+                novo_valor = novo_valor_cifrado   # o UPDATE depois vai usar o valor cifrado
+                
         valor_novo_log = novo_valor
 
         sql = f"UPDATE eleitores SET {coluna} = %s WHERE id = %s"
-        cursor.execute(sql, (novo_valor, id_eleitor))
+        cursor.execute(sql, [novo_valor, id_eleitor])
         conexao.commit()
 
         if cursor.rowcount > 0:
@@ -207,7 +246,7 @@ def remover_eleitor():
             nome = eleitor[1]
             titulo_eleitor = eleitor[2]
             tipo = "Mesário" if eleitor[5] == 1 else "Eleitor"
-            cursor.execute("DELETE FROM eleitores WHERE id = %s", (id_eleitor,))
+            cursor.execute("DELETE FROM eleitores WHERE id = %s", [id_eleitor])
             conexao.commit()
             registrar_exclusao_usuario(tipo, nome, titulo_eleitor)
             print("Eleitor removido com sucesso!")

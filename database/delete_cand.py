@@ -1,3 +1,5 @@
+import mysql.connector
+
 def deletar_candidato(conexao, cursor, numero_candidato):
     try:
         confirmacao = input(f"Tem certeza que deseja deletar o candidato nº {numero_candidato}? (s/n): ")

@@ -19,8 +19,8 @@ N = len(ALFABETO)
 PADDING = "X"
 
 # Matrizes da cifra (a de descriptografia e a inversa da de criptografia mod 36).
-MATRIZ_CRIPTO = ((5, 8), (17, 3))
-MATRIZ_DECRIPTO = ((33, 20), (29, 19))
+MATRIZ_CRIPTO = ([5, 8], [17, 3])
+MATRIZ_DECRIPTO = ([33, 20], [29, 19])
 
 
 def _normalizar(texto):
@@ -63,7 +63,7 @@ def _aplicar_cifra(texto, matriz):
 
     Args:
         texto (str): Texto de tamanho par, com caracteres do alfabeto.
-        matriz (tuple): Matriz 2x2 da cifra, no formato ((a, b), (c, d)).
+        matriz (list): Matriz 2x2 da cifra, no formato [[a, b], [c, d]].
 
     Returns:
         str: Texto resultante apos aplicar a cifra bloco a bloco.
@@ -83,7 +83,7 @@ def criptografia_dados(texto):
     """Criptografa um dado em claro para ser gravado no banco.
 
     Usada antes de qualquer INSERT/UPDATE de CPF, chave de acesso ou
-    protocolo de votacao (RNF006). Se o texto tiver tamanho impar, um
+    protocolo de votacao. Se o texto tiver tamanho impar, um
     caractere de padding e adicionado para fechar o ultimo bloco.
 
     Args:
@@ -111,8 +111,8 @@ def criptografia_dados(texto):
 def descriptografia_dados(cifrado):
     """Descriptografa um dado lido do banco, devolvendo o valor original.
 
-    Usada ao consultar/exibir um eleitor ou ao recuperar um protocolo
-    (RNF006). Remove o caractere de padding ao final, caso ele tenha sido
+    Usada ao consultar/exibir um eleitor ou ao recuperar um protocolo.
+    Remove o caractere de padding ao final, caso ele tenha sido
     adicionado durante a criptografia.
 
     Args:
@@ -141,33 +141,3 @@ def descriptografia_dados(cifrado):
 
     return texto
 
-
-# ---------------------------------------------------------------------------
-# Demonstracao / teste rapido. Roda so quando este arquivo e executado direto.
-# No projeto, voce vai importar as funcoes em vez de usar este bloco.
-# ---------------------------------------------------------------------------
-if __name__ == "__main__":
-    print("=== Simulacao: cadastro e busca de um eleitor ===\n")
-
-    cpf_eleitor = "123.456.789-01"
-    chave_titulo = "ANS4821"
-    protocolo = "VRT269950134"  # formato do PDF (12 caracteres)
-
-    cpf_no_banco = criptografia_dados(cpf_eleitor)
-    chave_no_banco = criptografia_dados(chave_titulo)
-    protocolo_no_banco = criptografia_dados(protocolo)
-
-    print("Gravando no banco (cifrado):")
-    print("  CPF      :", cpf_no_banco)
-    print("  Chave    :", chave_no_banco)
-    print("  Protocolo:", protocolo_no_banco)
-
-    print("\nLendo do banco (decifrado):")
-    print("  CPF      :", descriptografia_dados(cpf_no_banco))
-    print("  Chave    :", descriptografia_dados(chave_no_banco))
-    print("  Protocolo:", descriptografia_dados(protocolo_no_banco))
-
-    print("\nConferencia (ciclo bate?):")
-    print("  CPF ok?      ", descriptografia_dados(cpf_no_banco) == _normalizar(cpf_eleitor))
-    print("  Chave ok?    ", descriptografia_dados(chave_no_banco) == chave_titulo)
-    print("  Protocolo ok?", descriptografia_dados(protocolo_no_banco) == protocolo)
