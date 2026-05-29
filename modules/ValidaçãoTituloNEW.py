@@ -1,4 +1,18 @@
 def validar_titulo(titulo):
+    """
+    Valida um título eleitoral verificando sua estrutura e dígitos verificadores.
+    Remove espaços, verifica se contém apenas dígitos, se tem 12 caracteres,
+    se não são todos iguais e se o código da UF é válido (01 a 28).
+    Calcula os dois dígitos verificadores usando os pesos oficiais da
+    Justiça Eleitoral, com regra especial para SP (01) e MG (02).
+
+    Args:
+        titulo (str): Título eleitoral do eleitor com 12 dígitos.
+
+    Returns:
+        bool: Retorna True se o título for válido, False caso contrário.
+    """
+    
     titulo = titulo.strip()       # remove espaços das bordas
     
     if not titulo.isdigit():      # rejeita letras e caracteres especiais

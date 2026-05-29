@@ -3,7 +3,19 @@ from logs.sistemas_de_logs import registrar_abertura, registrar_alerta_acesso
 from modules.utilidades import limpar_tela
 from cripto.criptogafia_descripto import descriptografia_dados
 def zerézima(cursor, conexao):
-    
+    """
+    Realiza o processo de Zerézima antes da abertura da votação.
+    Limpa todos os registros de votos anteriores, zera os votos dos
+    candidatos e exibe a lista de candidatos registrados com zero votos.
+
+    Args:
+        cursor: Cursor de conexão com o banco de dados para executar queries.
+        conexao: Objeto de conexão com o banco de dados para confirmar alterações.
+
+    Returns:
+        bool: Retorna True após a conclusão bem-sucedida da Zerézima.
+    """
+
 
     print("\n--- INICIANDO ZERÉZIMA ---")
 
@@ -34,6 +46,23 @@ def zerézima(cursor, conexao):
 
 
 def abertura_urna(cursor, conexao):
+    
+    """
+    Realiza a abertura do sistema de votação com autenticação do mesário.
+    Solicita título eleitoral, CPF e chave de acesso em loops até que
+    os dados corretos sejam fornecidos. Verifica se o eleitor possui
+    perfil de mesário antes de liberar o acesso. Após autenticação,
+    executa a Zerézima e registra a abertura do sistema.
+
+    Args:
+        cursor: Cursor de conexão com o banco de dados para executar queries.
+        conexao: Objeto de conexão com o banco de dados para confirmar alterações.
+
+    Returns:
+        bool: Retorna True se a abertura foi bem-sucedida, False se o
+              eleitor não possui perfil de mesário.
+    """
+
     print("\n--- ABERTURA DO SISTEMA DE VOTAÇÃO ---")
    # Loop do título
     eleitor = None

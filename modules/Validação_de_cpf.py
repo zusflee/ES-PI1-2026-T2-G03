@@ -1,4 +1,17 @@
 def validação_de_cpf(cpf):
+    """
+    Valida um CPF verificando sua estrutura e dígitos verificadores.
+    Remove pontos e traços, verifica se tem 11 dígitos, se não são
+    todos iguais e calcula os dois dígitos verificadores usando a
+    matemática oficial da Receita Federal.
+
+    Args:
+        cpf (str): CPF do eleitor, podendo conter pontos e traços.
+
+    Returns:
+        bool: Retorna True se o CPF for válido, False caso contrário.
+    """
+
     cpf = ''.join(filter(str.isdigit, cpf))#Vai limpar os pontos e traços contidos no cpf
 
     if len(cpf) !=11: #Verificação para ver se tem os 11 digistos necessarios

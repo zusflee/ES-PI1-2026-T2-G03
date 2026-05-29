@@ -7,6 +7,20 @@ from modules.ValidaçãoTituloNEW import validar_titulo
 '''Função de exibir eleitor'''
 
 def exibir_eleitor(eleitor):
+    """
+    Exibe as informações de um eleitor formatadas no terminal.
+    Descriptografa o CPF e a chave de acesso antes de exibir,
+    e converte o campo de mesário de número para texto legível.
+
+    Args:
+    nome_usuario (str): O nome do usuário para compor a chave.
+    codigo_id (int): O identificador numérico único.
+
+     Returns:
+        None: A função apenas exibe os dados no terminal.
+    """
+
+
     print(f"\nEleitor:")
     print(f"ID      : {eleitor[0]}")
     print(f"Nome    : {eleitor[1]}")
@@ -20,6 +34,19 @@ def exibir_eleitor(eleitor):
 '''Buscar eleitor por ID (uso interno)'''
 
 def buscar_por_id(cursor, id_eleitor):
+    """
+    Busca um eleitor no banco de dados pelo seu ID.
+
+    Args:
+        cursor: Cursor de conexão com o banco de dados para executar queries.
+        id_eleitor (int): ID único do eleitor a ser buscado.
+
+    Returns:
+        tupla: Tupla com os dados do eleitor encontrado na seguinte ordem:
+               (id, nome, titulo, cpf, chave_acesso, is_mesario, status_voto).
+               Retorna None se nenhum eleitor for encontrado com o ID informado.
+    """
+
     cursor.execute("""
         SELECT id, nome, titulo, cpf, chave_acesso, is_mesario, status_voto
         FROM eleitores WHERE id = %s
@@ -30,6 +57,19 @@ def buscar_por_id(cursor, id_eleitor):
 '''Buscar Eleitor por nome ou titulo'''
 
 def buscar_eleitor(termo):
+    """
+    Busca eleitores no banco de dados pelo CPF ou título eleitoral.
+    O CPF é criptografado antes da busca para comparação com os dados
+    armazenados no banco. Exibe os resultados encontrados no terminal.
+
+    Args:
+        termo (str): CPF ou título eleitoral do eleitor a ser buscado.
+
+    Returns:
+        list: Lista de tuplas com os dados dos eleitores encontrados.
+              Retorna uma lista vazia se nenhum eleitor for encontrado,
+              se houver erro na conexão ou erro durante a busca.
+    """
     conexao, cursor = criar_conexao()
     if conexao == None:
         return []
@@ -66,8 +106,23 @@ def buscar_eleitor(termo):
 
 
 '''Editar Eleitor'''
-
 def editar_eleitor():
+    """
+    Permite a edição dos dados de um eleitor cadastrado no banco de dados.
+    Busca o eleitor pelo ID, exibe os dados atuais e permite alterar
+    nome, título, CPF ou perfil de mesário. Valida título e CPF antes
+    de salvar, verifica duplicidade e criptografa o CPF antes de atualizar.
+    Registra a alteração no log após a edição bem-sucedida.
+
+    Args:
+        Nenhum. Os dados são coletados via input durante a execução.
+
+    Returns:
+        int: Retorna 1 se a edição foi bem-sucedida.
+             Retorna 0 se a edição foi cancelada, se ocorrer erro
+             ou se os dados informados forem inválidos.
+    """
+
     conexao, cursor = criar_conexao()
     if conexao == None:
         return 0
@@ -220,6 +275,21 @@ def editar_eleitor():
 '''Remover Eleitor'''
 
 def remover_eleitor():
+    """
+    Remove um eleitor cadastrado no banco de dados pelo seu ID.
+    Busca o eleitor pelo ID, exibe os dados encontrados e solicita
+    confirmação antes de realizar a exclusão. Registra a remoção
+    no log após a exclusão bem-sucedida.
+
+    Args:
+        Nenhum. Os dados são coletados via input durante a execução.
+
+    Returns:
+        int: Retorna 1 se o eleitor foi removido com sucesso.
+             Retorna 0 se a remoção foi cancelada, se ocorrer erro
+             ou se nenhum eleitor for encontrado com o ID informado.
+    """
+
     conexao, cursor = criar_conexao()
     if conexao == None:
         return 0
@@ -266,6 +336,20 @@ def remover_eleitor():
 '''Listar Eleitores'''
 
 def listar_eleitores():
+    """
+    Lista todos os eleitores cadastrados no banco de dados em ordem alfabética.
+    Exibe os dados de cada eleitor formatados no terminal com separadores
+    visuais entre cada registro.
+
+    Args:
+        Nenhum. Os dados são buscados diretamente do banco de dados.
+
+    Returns:
+        None: A função apenas exibe os dados no terminal.
+              Retorna None antecipadamente se não houver conexão com o banco
+              ou se nenhum eleitor estiver cadastrado.
+    """
+
     conexao, cursor = criar_conexao()
     if conexao == None:
         return

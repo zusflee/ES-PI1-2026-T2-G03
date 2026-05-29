@@ -9,6 +9,20 @@ from cripto.criptogafia_descripto import criptografia_dados, descriptografia_dad
 
 
 def gerar_chave(nome):
+    """
+    Gera uma chave de acesso única para o eleitor baseada no seu nome.
+    A chave é composta pelas 2 primeiras letras do primeiro nome,
+    a primeira letra do segundo nome e 4 dígitos aleatórios.
+    Exemplo: "André Silva" gera "ANS" + "4821" = "ANS4821".
+
+    Args:
+        nome (str): Nome completo do eleitor com pelo menos dois nomes.
+
+    Returns:
+        str: Chave de acesso gerada com 7 caracteres no formato
+             (2 letras + 1 letra + 4 dígitos). Exemplo: "ANS4821".
+    """
+
     partes = nome.strip().split()
 
     resultado= ""
@@ -27,6 +41,22 @@ def gerar_chave(nome):
     return resultado
 
 def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
+    """
+    Realiza o cadastro de um novo eleitor no banco de dados.
+    Valida nome, título e CPF antes de salvar. Criptografa o CPF
+    e a chave de acesso antes de armazenar no banco. Verifica
+    duplicidade de CPF e título, gera a chave de acesso e registra
+    o cadastro no log diferenciando entre eleitor comum e mesário.
+
+    Args:
+        cursor: Cursor de conexão com o banco de dados para executar queries.
+        conexao: Objeto de conexão com o banco de dados para confirmar alterações.
+
+    Returns:
+        None: A função apenas exibe os dados cadastrados no terminal.
+              Retorna None antecipadamente se já existir um eleitor
+              cadastrado com o mesmo CPF ou título.
+    """
     print("\n--- CADASTRO DE ELEITOR ---")
     nome = input("Nome completo: ").strip()
     while len(nome.split()) < 2 or not nome.replace(" ", "").isalpha():

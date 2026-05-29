@@ -1,5 +1,22 @@
 from database.conexao_SQL import criar_conexao
+
+
 def boletim_urna(cursor):
+    """
+    Gera o boletim de urna com os resultados da votação.
+    Lista todos os candidatos em ordem alfabética com seus respectivos
+    votos, exibe o total de votos nulos e declara o vencedor da eleição.
+    Em caso de empate entre os dois primeiros colocados, informa que
+    não há vencedor definido.
+
+     Args:
+        cursor: Cursor de conexão com o banco de dados para executar queries.
+
+     Returns:
+        None: A função apenas exibe os resultados no terminal.
+              Retorna None antecipadamente se não houver candidatos cadastrados.
+    """
+
     print("\n--- BOLETIM DE URNA ---")
 
     ## lista candidatos em ordem alfabética com votos
@@ -32,6 +49,19 @@ def boletim_urna(cursor):
 
 
 def votos_por_partido(cursor):
+    """
+    Exibe a somatória de votos agrupados por partido político.
+    Busca todos os candidatos no banco de dados, agrupa seus votos
+    por partido e exibe o total de cada legenda em ordem alfabética.
+
+    Args:
+        cursor: Cursor de conexão com o banco de dados para executar queries.
+
+    Returns:
+        None: A função apenas exibe os resultados no terminal.
+              Retorna None antecipadamente se não houver partidos cadastrados.
+    """
+
     print("\n--- VOTOS POR PARTIDO ---")
 
     # realiza a soma de votos por partido
@@ -68,6 +98,19 @@ def estatistica_comparecimento(cursor):
 
 
 def validacao_integridade(cursor):
+    """
+     Realiza a validação de integridade da eleição comparando os registros
+     de votos na urna com a quantidade de eleitores que possuem o status
+     'Já Votou'. Confirma se a eleição foi íntegra ou detecta possíveis
+     inconsistências, informando a diferença de registros caso exista.
+
+      Args:
+        cursor: Cursor de conexão com o banco de dados para executar queries.
+
+      Returns:
+        None: A função apenas exibe o relatório de integridade no terminal.
+    """
+
     print("\n--- VALIDAÇÃO DE INTEGRIDADE ---")
 
     # compara votos na urna com eleitores que já votaram
