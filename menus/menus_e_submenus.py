@@ -13,7 +13,6 @@ from database.atualizar_partido import atualizar_partido
 from modules.busca_edicao_remover import listar_eleitores
 from modules.abertura_urna import abertura_urna
 from modules.utilidades import limpar_tela
-from logs.sistemas_de_logs import registrar_voto_sucesso    
 from cripto.criptogafia_descripto import criptografia_dados, descriptografia_dados
 from modules.BU_e_Resultado import boletim_urna, votos_por_partido, estatistica_comparecimento, validacao_integridade
 from modules.encerramento_votacao import encerramento_votacao
@@ -300,7 +299,7 @@ def fluxo_voto():
                 cursor.execute("INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)", [None, protocolo_cifrado])
                 cursor.execute("UPDATE eleitores SET status_voto = 'Já Votou' WHERE titulo = %s", [titulo])
                 conexao.commit()
-                registrar_voto_sucesso(protocolo)
+                registrar_voto_sucesso()
                 print("\n[VOTO NULO REGISTRADO]")
                 print(f"Protocolo: {protocolo}")
                 input("\nPressione Enter para continuar...")
@@ -338,7 +337,7 @@ def fluxo_voto():
                 [titulo]
             )
                 conexao.commit()
-                registrar_voto_sucesso(protocolo)
+                registrar_voto_sucesso()
                 print("[SUCESSO] Voto registrado com sucesso!")
                 print(f"\nSeu protocolo de votação: {protocolo}")  
                 input("\nPressione Enter para continuar...")        

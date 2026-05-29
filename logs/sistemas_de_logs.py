@@ -12,9 +12,6 @@ def registrar_log(mensagem):
     with open(ARQUIVO_LOG, "a", encoding="utf-8") as arquivo:
         arquivo.write(linha)
 
-def registrar_abertura():
-    registrar_log("ABERTURA: Votação iniciada com sucesso.")
-
 def registrar_exclusao_usuario(tipo, nome, titulo):
     registrar_log(f"EXCLUSAO: {tipo} removido com sucesso. Nome: {nome}. Título: {titulo}")
 
@@ -60,11 +57,17 @@ def registrar_alerta_voto_duplo(titulo=None):
         registrar_log("ALERTA: Tentativa de voto duplo.")
 
 
-def registrar_voto_sucesso(protocolo=None):
-    if protocolo:
-        registrar_log(f"SUCESSO: Voto realizado com sucesso. Protocolo: {protocolo}")
-    else:
-        registrar_log("SUCESSO: Voto realizado com sucesso.")
+def registrar_voto_sucesso():
+    """
+    Registra no log o evento de voto realizado com sucesso (RF002.02.01.06).
+    O protocolo nao e registrado no log para proteger o sigilo do voto -
+    ele fica disponivel apenas no banco de dados, acessivel via menu de
+    Auditoria > Ver Protocolos.
+
+    Returns:
+        None: Apenas grava a linha no arquivo de log.
+    """
+    registrar_log("SUCESSO: Voto realizado com sucesso.")
 
 
 def registrar_encerramento():

@@ -1,3 +1,10 @@
 INICIO DA VOTAÇÃO
-[2026-05-28 21:43:35] ABERTURA: Votação iniciada com sucesso. Total de votos zerado.
-[2026-05-28 21:43:41] ALERTA: Titulo invalido no encerramento da urna.
+[2026-05-29 18:31:12] ABERTURA: Votação iniciada com sucesso. Total de votos zerado.
+[2026-05-29 18:32:56] SUCESSO: Voto realizado com sucesso. Protocolo: VFT262269419
+[2026-05-29 18:34:09] ALERTA: CPF incorreto no encerramento da urna.
+[2026-05-29 18:34:11] ALERTA: CPF incorreto no encerramento da urna.
+[2026-05-29 18:34:12] ALERTA: CPF incorreto no encerramento da urna.
+[2026-05-29 18:34:19] ALERTA: Chave de acesso incorreta no encerramento da urna.
+[2026-05-29 18:34:20] ALERTA: Chave de acesso incorreta no encerramento da urna.
+[2026-05-29 18:34:21] ALERTA: Chave de acesso incorreta no encerramento da urna.
+[2026-05-29 18:35:00] ENCERRAMENTO: Votação encerrada com sucesso.
