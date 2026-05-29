@@ -22,5 +22,4 @@ def criar_conexao():
         return None, None
 
 if __name__ == "__main__":
-    # Nota: certifique-se de que a função teste_conexao() esteja definida se for testar isoladamente.
-    teste_conexao()
+    conexao, cursor = criar_conexao()

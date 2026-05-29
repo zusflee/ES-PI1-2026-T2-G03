@@ -20,7 +20,8 @@ from logs.sistemas_de_logs import (
     exibir_logs,
     registrar_alerta_voto_duplo,
     registrar_voto_sucesso,
-    registrar_encerramento
+    registrar_encerramento,
+    registrar_alerta_acesso
 )
 from modules.protocolo import gerar_protocolo
 
@@ -245,6 +246,7 @@ def fluxo_voto():
     cursor.execute("SELECT * FROM eleitores WHERE titulo = %s", [titulo])
     eleitor = cursor.fetchone()
     while eleitor is None:
+        registrar_alerta_acesso("Titulo de eleitor invalido no momento do voto.")
         print("Credenciais inválidas. Acesso negado.")
         titulo = input("Digite seu título eleitoral: ")
         cursor.execute("SELECT * FROM eleitores WHERE titulo = %s", [titulo])
@@ -253,7 +255,8 @@ def fluxo_voto():
     #validação cpf
     cpf_real = descriptografia_dados(eleitor[3])      # abre o cpf cifrado do banco para comparar com o que o eleitor digitar
     cmc_cpf = input("Digite os 4 primeiros dígitos do CPF: ")
-    while cpf_real[:4] != cmc_cpf:                    # compara com o cpf real (descriptografado) para validar o acesso, sem expor o CPF completo
+    while cpf_real[:4] != cmc_cpf:
+        registrar_alerta_acesso("CPF incorreto no momento do voto.")                 # compara com o cpf real (descriptografado) para validar o acesso, sem expor o CPF completo
         print("Credenciais inválidas. Acesso negado.")
         cmc_cpf = input("Digite os 4 primeiros dígitos do CPF: ")
 
@@ -261,7 +264,8 @@ def fluxo_voto():
     chave_real = descriptografia_dados(eleitor[4])    # abre a chave de acesso cifrada do banco para comparar com o que o eleitor digitar
     chave_acesso = input("Digite sua chave de acesso: ").upper()   # pede a chave de acesso e já converte para maiúscula, garantindo que a comparação seja case-insensitive
     
-    while chave_real != chave_acesso:                 # compara com a chave real (descriptografada) para validar o acesso, sem expor a chave completa
+    while chave_real != chave_acesso:  
+        registrar_alerta_acesso("Chave de acesso incorreta no momento do voto.")               # compara com a chave real (descriptografada) para validar o acesso, sem expor a chave completa
         print("Credenciais inválidas. Acesso negado.")
         chave_acesso = input("Digite sua chave de acesso: ").upper()   # converte para maiúscula, garantindo que a comparação seja case-insensitive
 
@@ -422,6 +426,20 @@ def menu_urna():
 
 # //// LOGIN DO MESARIO ////
 def login_mesario():
+    """
+    Realiza o login do mesário para abertura da urna.
+    Cria a conexão com o banco, chama a função de abertura da urna
+    para validar a identidade do mesário e executa a Zerézima.
+    Se a autenticação for bem-sucedida, libera o acesso ao menu da urna.
+
+    Args:
+        Nenhum. Os dados são coletados via input durante a execução.
+
+    Returns:
+        None: A função apenas exibe os resultados no terminal.
+              Retorna None antecipadamente se não houver conexão com
+              o banco ou se a autenticação falhar.
+    """
     print("\n--- [LOGIN DO MESARIO] ---")
 
     conexao, cursor = criar_conexao()
@@ -446,6 +464,17 @@ def login_mesario():
 
 # //// MENU DE VOTACAO ////
 def menu_votacao():
+    """
+    Exibe e gerencia o menu de votação do sistema.
+    Permite acessar o login do mesário para abrir o sistema de votação,
+    acessar o submenu de auditoria ou de resultados da votação.
+
+    Args:
+        Nenhum. As opções são coletadas via input durante a execução.
+
+    Returns:
+        None: A função apenas exibe os menus no terminal.
+    """
     opcao_voto = ""
     while opcao_voto != "4":
         limpar_tela()
@@ -474,6 +503,18 @@ def menu_votacao():
 
 # //// CADASTRAR ELEITOR ////
 def cadastrar_eleitor():
+    """
+    Wrapper que gerencia a conexão com o banco para o cadastro de eleitor.
+    Abre a conexão, chama a função de cadastro do módulo CadastroEleitorNEW
+    e fecha a conexão após a operação.
+
+    Args:
+        Nenhum. Os dados são coletados via input durante a execução
+        da função de cadastro.
+
+    Returns:
+        None: A função apenas exibe os resultados no terminal.
+    """
     conexao, cursor = criar_conexao()
     if conexao and cursor:
         cadastrar_eleitor_db(cursor, conexao)
@@ -482,6 +523,17 @@ def cadastrar_eleitor():
 
 # //// MENU DE GERENCIAMENTO ////
 def menu_gerenciamento():
+    """
+    Exibe e gerencia o menu de gerenciamento do sistema.
+    Permite cadastrar, editar, remover, buscar e listar eleitores,
+    além de acessar o submenu de gerenciamento de candidatos.
+
+    Args:
+        Nenhum. As opções e dados são coletados via input durante a execução.
+
+    Returns:
+        None: A função apenas exibe os menus no terminal.
+    """
     opcao_gerenciamento = ""
     while opcao_gerenciamento != "7":
         limpar_tela()
@@ -526,6 +578,20 @@ def menu_gerenciamento():
 
 # //// INICIO DO SISTEMA ////
 def iniciar_sistema():
+    """
+    Inicia o sistema de votação digital.
+    Verifica a conexão com o banco de dados antes de prosseguir
+    e exibe o menu principal com as opções de Gerenciamento, Votação
+    e Sair. Encerra o sistema quando o usuário escolhe a opção Sair.
+
+    Args:
+        Nenhum. As opções são coletadas via input durante a execução.
+
+    Returns:
+        None: A função apenas exibe os menus no terminal.
+              Retorna None antecipadamente se não houver conexão
+              com o banco de dados.
+    """
     print("Conectando ao banco de dados...")
     conexao, cursor = criar_conexao()
     if not conexao or not cursor:

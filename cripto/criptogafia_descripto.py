@@ -1,5 +1,3 @@
-from database.conexao_SQL import criar_conexao
-
 """Modulo de criptografia de dados usando a Cifra de Hill (blocos de 2).
 
 Atende ao requisito RNF006: criptografar CPF, chave de acesso e protocolo

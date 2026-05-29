@@ -60,23 +60,19 @@ cd ES-PI1-2026-T2-G03
 
 Abra o MySQL e execute o script:
 ```bash
-mysql -u root -p < database/schema.sql
+mysql -u root -p < database/script_database.sql
 ```
 
 **3. Configure a conexão:**
 
-Edite o arquivo `database/conexao.py` e ajuste seu usuário e senha do MySQL:
+Edite o arquivo `database/conexao_SQL.py` e ajuste seu usuário e senha do MySQL:
 ```python
 user="root",      # seu usuário
 password="",      # sua senha
 ```
 
-**4. (Opcional) Insira dados de exemplo:**
-```bash
-python database/inserir_dados.py
-```
 
-**5. Execute o sistema:**
+**4. Execute o sistema:**
 ```bash
-python main.py
+python MAIN/main.py
 ```

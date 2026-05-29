@@ -1,3 +1,2 @@
-INICIO DA VOTAÇÃO
-[2026-05-29 18:48:42] ABERTURA: Votação iniciada com sucesso. Total de votos zerado.
-[2026-05-29 18:52:33] ENCERRAMENTO: Votação encerrada com sucesso.
+--LOG DE OCORRÊNCIAS--
+[2026-05-29 20:02:38] ALERTA: Tentativa de cadastro duplicado. Titulo: 814782360116

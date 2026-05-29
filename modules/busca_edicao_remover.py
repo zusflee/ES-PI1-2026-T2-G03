@@ -13,10 +13,11 @@ def exibir_eleitor(eleitor):
     e converte o campo de mesário de número para texto legível.
 
     Args:
-    nome_usuario (str): O nome do usuário para compor a chave.
-    codigo_id (int): O identificador numérico único.
+        eleitor (tuple): Registro do eleitor retornado pelo banco,
+            contendo os campos na ordem (id, nome, titulo, cpf,
+            chave_acesso, is_mesario, status_voto).
 
-     Returns:
+    Returns:
         None: A função apenas exibe os dados no terminal.
     """
 
