@@ -27,6 +27,18 @@ from modules.protocolo import gerar_protocolo
 
 # //// SUBMENU DE AUDITORIA ////
 def menu_auditoria():
+    """
+     Exibe e gerencia o submenu de auditoria do sistema.
+     Permite visualizar os logs de eventos do sistema e os protocolos
+     de votação registrados no banco de dados. Os protocolos são
+     descriptografados e exibidos em ordem alfabética.
+
+     Args:
+        Nenhum. As opções são coletadas via input durante a execução.
+
+     Returns:
+        None: A função apenas exibe os menus e resultados no terminal.
+    """
     opcao_auditoria = ""
     while opcao_auditoria != "3":
         limpar_tela()
@@ -75,6 +87,19 @@ def menu_auditoria():
 
 # //// SUBMENU DE RESULTADOS ////
 def menu_resultados():
+    """
+    Exibe e gerencia o submenu de resultados da votação.
+    Permite acessar o boletim de urna, votos por partido,
+    estatísticas de comparecimento e validação de integridade.
+    Cria e fecha a conexão com o banco de dados para cada opção.
+
+    Args:
+        Nenhum. As opções são coletadas via input durante a execução.
+
+    Returns:
+        None: A função apenas exibe os menus e resultados no terminal.
+    """
+
     opcao_resultado = ""
     while opcao_resultado != "5":
         limpar_tela()
@@ -125,6 +150,18 @@ def menu_resultados():
 
 # //// MENU DE CANDIDATOS ////
 def menu_candidatos():
+    """
+    Exibe e gerencia o submenu de candidatos do sistema.
+    Permite inserir, buscar, deletar candidatos e atualizar
+    o partido de um candidato. Cria e fecha a conexão com o
+    banco de dados para cada operação realizada.
+
+    Args:
+        Nenhum. As opções e dados são coletados via input durante a execução.
+
+    Returns:
+        None: A função apenas exibe os menus e resultados no terminal.
+    """
     opcao = ""
     while opcao != "5":
         limpar_tela()
@@ -180,6 +217,22 @@ def menu_candidatos():
 
 # //// FLUXO DE VOTO ////
 def fluxo_voto():
+    """
+     Gerencia o fluxo completo de votação de um eleitor.
+     Valida a identidade do eleitor pelo título, CPF e chave de acesso,
+     descriptografando os dados do banco para comparação. Verifica se o
+     eleitor já votou, busca o candidato pelo número informado e registra
+     o voto ou voto nulo após confirmação. Criptografa o protocolo antes
+     de salvar no banco e atualiza o status do eleitor para 'Já Votou'.
+
+     Args:
+        Nenhum. Os dados são coletados via input durante a execução.
+
+     Returns:
+        None: A função apenas exibe os resultados no terminal.
+              Retorna None antecipadamente se não houver conexão com
+              o banco ou se o eleitor já tiver votado.
+    """
     conexao, cursor = criar_conexao()
     if not conexao or not cursor:
         print("[ERRO] Sem conexão com o banco.")
@@ -324,6 +377,17 @@ def encerrar_votacao():
 
 # //// MENU DA URNA ////
 def menu_urna():
+    """
+     Exibe e gerencia o menu da urna eletrônica durante a votação.
+     Permite iniciar o fluxo de votação ou encerrar a votação.
+     Ao encerrar com sucesso, retorna automaticamente ao menu anterior.
+
+     Args:
+        Nenhum. As opções são coletadas via input durante a execução.
+
+     Returns:
+        None: A função apenas exibe os menus e resultados no terminal.
+    """
     opcao_urna = ""
     while opcao_urna != "3":
         limpar_tela()
