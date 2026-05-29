@@ -6,7 +6,7 @@ def buscar_candidato(cursor, nome):
     '''O % antes do nome adiciona busca parcial (ex: "Jo" encontra "João").'''
     '''O %s protege contra SQL injection (interfiram nas consultas)'''
     sql = "SELECT * FROM candidatos WHERE nome LIKE %s"  # LIKE encontra: "João", "João Silva","João Carlos"
-    valor = (f"%{nome}%",)
+    valor = [f"%{nome}%"]
     cursor.execute(sql, valor)
     resultados = cursor.fetchall()  # Pega todas as linhas encontradas
 
@@ -22,14 +22,3 @@ def buscar_candidato(cursor, nome):
         print("Nenhum candidato encontrado com esse nome.")
     return resultados
 
-
-# Bloco de teste
-
-if __name__ == "__main__":
-    conexao = criar_conexao()
-    cursor = conexao.cursor()
-
-    buscar_candidato(cursor, "Gabriel")
-
-    cursor.close()
-    conexao.close()

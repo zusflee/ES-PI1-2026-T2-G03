@@ -18,7 +18,7 @@ def encerramento_votacao(cursor, conexao):
     """
     titulo = input("Digite seu titulo de eleitor: ")
     cmc_cpf = input("Digite os 4 primeiros digitos do CPF: ")
-    chave_acesso = input("Digite sua chave de acesso: ")
+    chave_acesso = input("Digite sua chave de acesso: ").upper() # converte para maiúscula, garantindo que a comparação seja case-insensitive
 
     cursor.execute("SELECT * FROM eleitores WHERE titulo = %s", [titulo])
     eleitor = cursor.fetchone()
@@ -44,7 +44,7 @@ def encerramento_votacao(cursor, conexao):
     while chave_real != chave_acesso:
         registrar_alerta_acesso("Chave de acesso incorreta no encerramento da urna.")
         print("Chave de acesso incorreta. Tente novamente.")
-        chave_acesso = input("Digite sua chave de acesso: ")
+        chave_acesso = input("Digite sua chave de acesso: ").upper() # converte para maiúscula, garantindo que a comparação seja case-insensitive
 
     confirmacao = ""
     respostas_validas = ["sim", "não", "nao"]
@@ -57,7 +57,7 @@ def encerramento_votacao(cursor, conexao):
         print("Encerramento cancelado. Retornando ao menu anterior.")
         return False
 
-    chave_confirmacao = input("Digite sua chave de acesso novamente para confirmar: ")
+    chave_confirmacao = input("Digite sua chave de acesso novamente para confirmar: ").upper() # converte para maiúscula, garantindo que a comparação seja case-insensitive
     if chave_confirmacao != chave_real:
         registrar_alerta_acesso("Segunda chave incorreta no encerramento da urna.")
         print("Chave de acesso incorreta. Encerramento cancelado!")

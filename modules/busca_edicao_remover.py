@@ -50,7 +50,7 @@ def buscar_por_id(cursor, id_eleitor):
     cursor.execute("""
         SELECT id, nome, titulo, cpf, chave_acesso, is_mesario, status_voto
         FROM eleitores WHERE id = %s
-        """, (id_eleitor,))
+        """, [id_eleitor])
     return cursor.fetchone()
 
 
@@ -309,7 +309,8 @@ def remover_eleitor():
         confirma = ""
         while confirma not in ["S", "N"]:
             confirma = input("\nConfirmar remocao? (S/N): ").upper()
-            id_eleitor
+            if confirma not in ["S", "N"]:
+                print("[ERRO] Digite apenas S ou N.")
 
 
         if confirma == "S":

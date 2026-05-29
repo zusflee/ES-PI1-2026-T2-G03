@@ -260,11 +260,11 @@ def fluxo_voto():
 
     #validar chave de acesso
     chave_real = descriptografia_dados(eleitor[4])    # abre a chave de acesso cifrada do banco para comparar com o que o eleitor digitar
-    chave_acesso = input("Digite sua chave de acesso: ")
+    chave_acesso = input("Digite sua chave de acesso: ").upper()   # pede a chave de acesso e já converte para maiúscula, garantindo que a comparação seja case-insensitive
     
     while chave_real != chave_acesso:                 # compara com a chave real (descriptografada) para validar o acesso, sem expor a chave completa
         print("Credenciais inválidas. Acesso negado.")
-        chave_acesso = input("Digite sua chave de acesso: ")
+        chave_acesso = input("Digite sua chave de acesso: ").upper()   # converte para maiúscula, garantindo que a comparação seja case-insensitive
 
 
     # Verificar se já votou
@@ -297,8 +297,8 @@ def fluxo_voto():
                 # Registra voto nulo
                 protocolo = gerar_protocolo(0)  
                 protocolo_cifrado = criptografia_dados(protocolo)
-                cursor.execute("INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)",(None, protocolo_cifrado))
-                cursor.execute("UPDATE eleitores SET status_voto = 'Já Votou' WHERE titulo = %s",[titulo])
+                cursor.execute("INSERT INTO votos (id_candidato, data_hora, protocolo) VALUES (%s, NOW(), %s)", [None, protocolo_cifrado])
+                cursor.execute("UPDATE eleitores SET status_voto = 'Já Votou' WHERE titulo = %s", [titulo])
                 conexao.commit()
                 registrar_voto_sucesso(protocolo)
                 print("\n[VOTO NULO REGISTRADO]")

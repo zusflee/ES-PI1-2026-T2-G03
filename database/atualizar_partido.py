@@ -3,7 +3,7 @@ import mysql.connector
 def atualizar_partido(conexao, cursor, numero_candidato, novo_partido):
     try:
         sql = "UPDATE candidatos SET partido = %s WHERE numero = %s"
-        valores = (novo_partido, numero_candidato)
+        valores = [novo_partido, numero_candidato]
 
         cursor.execute(sql, valores)
         conexao.commit()

@@ -9,7 +9,7 @@ def inserir_candidatos(conexao, cursor, nome, numero, partido):
     
     try:
         sql = "INSERT INTO candidatos (nome, numero, partido) VALUES (%s, %s, %s)"
-        valores = (nome, numero, partido)  
+        valores = [nome, numero, partido]
 
         cursor.execute(sql, valores)
         conexao.commit()  # Confirma a inserção no banco
@@ -25,13 +25,3 @@ def inserir_candidatos(conexao, cursor, nome, numero, partido):
         print(f"Erro ao inserir candidato: {erro}")
 
         
-# Bloco de teste
-
-if __name__ == "__main__":
-    conexao = criar_conexao()
-    cursor = conexao.cursor()
-
-    inserir_candidatos(conexao, cursor,)
-
-    cursor.close()
-    conexao.close()

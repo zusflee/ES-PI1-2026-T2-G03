@@ -68,7 +68,7 @@ def abertura_urna(cursor, conexao):
     eleitor = None
     while eleitor is None:
         titulo = input("Digite seu título eleitoral: ")
-        cursor.execute("SELECT * FROM eleitores WHERE titulo = %s", (titulo,))
+        cursor.execute("SELECT * FROM eleitores WHERE titulo = %s", [titulo])
         eleitor = cursor.fetchone()
         if eleitor is None:
             registrar_alerta_acesso("Título de eleitor não encontrado.")

@@ -19,8 +19,8 @@ N = len(ALFABETO)
 PADDING = "X"
 
 # Matrizes da cifra (a de descriptografia e a inversa da de criptografia mod 36).
-MATRIZ_CRIPTO = ([5, 8], [17, 3])
-MATRIZ_DECRIPTO = ([33, 20], [29, 19])
+MATRIZ_CRIPTO = [[5, 8], [17, 3]]
+MATRIZ_DECRIPTO = [[33, 20], [29, 19]]
 
 
 def _normalizar(texto):

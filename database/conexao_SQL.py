@@ -22,15 +22,6 @@ def criar_conexao():
 '''"try" significa: "tenta fazer isso; se der errado, vai pro except"
     Usamos try/except aqui porque conexão com banco pode falhar'''
  
-#Teste de leitura do banco
-def teste_conexao():
-    conexao, cursor = criar_conexao()
-    if cursor:
-        cursor.execute("SELECT DATABASE();")
-        resultado = cursor.fetchone()
-        print("Banco atual:",resultado)
-        cursor.close()
-        conexao.close()
 
 # Chama a função de teste ao rodar o arquivo
 if __name__ == "__main__":

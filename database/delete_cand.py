@@ -9,7 +9,7 @@ def deletar_candidato(conexao, cursor, numero_candidato):
             return  # Sai da função sem fazer nada
 
         sql = "DELETE FROM candidatos WHERE numero = %s"
-        valor = (numero_candidato,)  # Vírgula obrigatória — tupla com 1 elemento
+        valor = [numero_candidato]  # Lista com 1 elemento
 
         cursor.execute(sql, valor)
         conexao.commit()

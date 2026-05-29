@@ -111,5 +111,4 @@ def cadastrar_eleitor(cursor, conexao): ## onde se inicia o cadastro do eleitor.
     print("--------------------------\n")
 
 
-conexao, cursor = criar_conexao()
 
