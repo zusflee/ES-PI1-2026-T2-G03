@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Ambiente virtual
+venv/
+env/
+.venv/
+.env/
+
+# Variáveis de ambiente / credenciais
+.env
+*.env
+config.ini
+config.cfg
+secrets.py
+credentials.py
+
+# Banco de dados / senhas
+db_config.py
+database_config.py
+*.sql.bak
+
+# Logs gerados pelo sistema
+logs/*.txt
+logs/*.log
+*.log
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Arquivos temporários
+*.tmp
+*.bak
+*.swp
