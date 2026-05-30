@@ -34,6 +34,11 @@ Projeto desenvolvido para a disciplina **Projeto Integrador I – Engenharia de 
 - **Repositório:** Git + GitHub
 - **Gerenciamento:** GitHub Projects
 
+
+## 📄 Documentação
+
+- [📥 Escopo e Requisitos do Projeto](./Requistos_e_Escopo_Projeto_Integrador_I__ES.pdf)
+
 ---
 
 ## ▶️ Como Executar
