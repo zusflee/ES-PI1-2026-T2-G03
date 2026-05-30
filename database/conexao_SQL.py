@@ -10,10 +10,10 @@ def criar_conexao():
     """
     try:
         conexao = mysql.connector.connect(
-            host='127.0.0.1',
-            user='root',
-            password='Cabo2015@',
-            database='sistema_eleitoral'
+            host='', # Insira seu host aqui
+            user='', # Insira seu user aqui
+            password='', # Insira sua senha aqui
+            database='' # Insira o nome do database aqui
         )
         cursor = conexao.cursor()
         return conexao, cursor

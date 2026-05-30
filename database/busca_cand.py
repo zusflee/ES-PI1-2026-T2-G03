@@ -28,3 +28,4 @@ def buscar_candidato(cursor, nome):
         print("Nenhum candidato encontrado com esse nome.")
         
     return resultados
+

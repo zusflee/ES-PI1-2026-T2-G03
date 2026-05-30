@@ -24,6 +24,7 @@ from logs.sistemas_de_logs import (
     registrar_alerta_acesso
 )
 from modules.protocolo import gerar_protocolo
+from database.listar_cand import listar_candidatos
 
 # //// SUBMENU DE AUDITORIA ////
 def menu_auditoria():
@@ -164,23 +165,47 @@ def menu_candidatos():
         None: A função apenas exibe os menus e resultados no terminal.
      """
     opcao = ""
-    while opcao != "5":
+    while opcao != "6":
         limpar_tela()
         print("\n--- [CANDIDATOS] ---")
         print("1. Inserir Candidato")
         print("2. Buscar Candidato")
         print("3. Deletar Candidato")
         print("4. Atualizar Partido")
-        print("5. Voltar")
+        print("5. Listar Candidatos")
+        print("6. Voltar")
 
         opcao = input("\nEscolha uma opcao: ")
 
         match opcao:
             case "1":
                 conexao, cursor = criar_conexao()
-                nome   = input("Nome do candidato: ")
-                numero = input("Numero: ")
-                partido = input("Partido: ")
+                # Validação do nome (só letras e espaços)
+                nome = input("Nome do candidato: ").strip()
+                while not nome.replace(" ", "").isalpha() or len(nome.strip()) == 0:
+                    print("[ERRO] Nome deve conter apenas letras.")
+                    nome = input("Nome do candidato: ").strip()
+
+                # Validação do número (só dígitos)
+                numero = input("Numero: ").strip()
+                while not numero.isdigit():
+                    print("[ERRO] Número deve conter apenas dígitos.")
+                    numero = input("Numero: ").strip()
+                
+                # Verifica se o número já existe no banco
+                cursor.execute("SELECT id FROM candidatos WHERE numero = %s", [numero])
+                if cursor.fetchone():
+                    print(f"[ERRO] Já existe um candidato com o número {numero}. Operação cancelada.")
+                    cursor.close()
+                    conexao.close()
+                    input("\nPressione Enter para continuar...")
+                    continue    
+
+                # Validação do partido (só letras e espaços)
+                partido = input("Partido: ").strip()
+                while not partido.replace(" ", "").isalpha() or len(partido.strip()) == 0:
+                    print("[ERRO] Partido deve conter apenas letras.")
+                    partido = input("Partido: ").strip()
                 inserir_candidatos(conexao, cursor, nome, numero, partido)
                 cursor.close()    
                 conexao.close()
@@ -208,6 +233,13 @@ def menu_candidatos():
                 conexao.close()
                 input("\nPressione Enter para continuar...")
             case "5":
+                conexao, cursor = criar_conexao()
+                if conexao and cursor:
+                    listar_candidatos(cursor)
+                    cursor.close()
+                    conexao.close()
+                input("\nPressione Enter para continuar...")
+            case "6":
                 print("Voltando...")
                 input("\nPressione Enter para continuar...")
             case _:
