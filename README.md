@@ -74,5 +74,5 @@ password="",      # sua senha
 
 **4. Execute o sistema:**
 ```bash
-python MAIN/main.py
+python main/main.py
 ```
